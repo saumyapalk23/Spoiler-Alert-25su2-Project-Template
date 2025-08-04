@@ -34,10 +34,10 @@ SideBarLinks(show_home=True)
 
 # set the title of the page and provide a simple prompt. 
 logger.info("Loading the Home page of the app")
-st.title('CS 4973 Sample DoC Project App')
+st.title('CS 3200 Project Template')
 st.write('\n\n')
-st.write('### 2025 Summer 1 Dialogue of Civilizations')
-st.write('\n')
+# st.write('### Overview:')
+# st.write('\n')
 st.write('#### HI! As which user would you like to log in?')
 
 # For each of the user personas for which we are implementing
