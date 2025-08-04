@@ -5,3 +5,4 @@ secrets/
 .env
 .env.local
 */logs/*
+.vscode/
