@@ -7,13 +7,13 @@ If you make changes to any of the files in the `database-files/` folder AFTER th
 If you are in your sandbox repo, do the following:
 
 ```bash
-docker compose -f sandbox.yaml down db && docker compose -f sandbox.yaml up db
+docker compose -f sandbox.yaml down db -v && docker compose -f sandbox.yaml up db
 ```
 
 If you are working with your team repository, do the following
 
 ```bash
-docker compose down db && docker compose up db
+docker compose down db -v && docker compose up db
 ```
 
-This will delete and recreate the database container.
+The `-v` flag will also delete the volume associated with MySQL, which is necessary to rerun the sql files. 
