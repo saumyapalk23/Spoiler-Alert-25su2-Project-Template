@@ -18,3 +18,5 @@ base="light"
 primaryColor="#6550e6"
 font="monospace"
 
+[server]
+runOnSave = true
