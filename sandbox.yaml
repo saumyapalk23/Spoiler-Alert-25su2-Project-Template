@@ -1,29 +1,33 @@
-name: project-app-sandbox
+name: project-app-personal-sandbox
 
 services:
-  app-test:
+  app:
     build: ./app
-    container_name: web-app-test
+    # container_name: web-app-sandbox
     hostname: web-app
     volumes: ["./app/src:/appcode"]
     ports:
       - 8502:8501
 
-  api-test:
+  api:
     build: ./api
-    container_name: web-api-test
+    # container_name: web-api-sandbox
     hostname: web-api
     volumes: ["./api:/apicode"]
     ports:
       - 4001:4000
 
-  db-test:
+  db:
     env_file:
       - ./api/.env
     image: mysql:9
-    container_name: mysql-db-test
+    # container_name: mysql_db-sandbox
     hostname: db
     volumes:
-      - ./database-files:/docker-entrypoint-initdb.d/:ro
+      - "./database-files:/docker-entrypoint-initdb.d/:ro"
+      - "mysql_data:/var/lib/mysql"
     ports:
       - 3201:3306
+
+volumes:
+  mysql_data:
