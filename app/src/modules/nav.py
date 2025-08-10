@@ -20,19 +20,15 @@ def PolStratAdvHomeNav():
         "pages/00_Pol_Strat_Home.py", label="Political Strategist Home", icon="👤"
     )
 
-# def Favorites():
-#     st.sidebar.page_link(
-#         "pages/40_Favs.py", label="Favs", icon="❤️"
-#     )
+def Favorites():
+    st.sidebar.page_link(
+        "pages/40_Favs.py", label="Favs", icon="❤️"
+    )
 
 def WorldBankVizNav():
     st.sidebar.page_link(
         "pages/01_World_Bank_Viz.py", label="World Bank Visualization", icon="🏦"
     )
-        st.sidebar.page_link(
-        "pages/40_Favs.py", label="Favs", icon="❤️"
-    )
-
 
 def MapDemoNav():
     st.sidebar.page_link("pages/02_Map_Demo.py", label="Map Demonstration", icon="🗺️")
