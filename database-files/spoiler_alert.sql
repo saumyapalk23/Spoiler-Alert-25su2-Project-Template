@@ -33,9 +33,10 @@ CREATE TABLE IF NOT EXISTS shows(
 DROP TABLE IF EXISTS favorites;
 CREATE TABLE favorites
 (
-   favoriteId  INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+   favoriteId  INT NOT NULL PRIMARY KEY,
    userId      INT NOT NULL,
-   showId      INT NOT NULL,
+   showId      INT,
+   actorId     INT,
    favoritedAt DATETIME DEFAULT CURRENT_TIMESTAMP,
    FOREIGN KEY (userId) REFERENCES users (userId)
        ON DELETE CASCADE ON UPDATE CASCADE,

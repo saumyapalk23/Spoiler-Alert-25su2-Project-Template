@@ -19,11 +19,6 @@ if st.button('View World Bank Data Visualization',
              use_container_width=True):
   st.switch_page('pages/01_World_Bank_Viz.py')
 
-if st.button('View Favorites', 
-             type='primary',
-             use_container_width=True):
-  st.switch_page('pages/40_Favs.py')
-
 if st.button('View World Map Demo', 
              type='primary',
              use_container_width=True):

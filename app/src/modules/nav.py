@@ -20,10 +20,17 @@ def PolStratAdvHomeNav():
         "pages/00_Pol_Strat_Home.py", label="Political Strategist Home", icon="👤"
     )
 
+# def Favorites():
+#     st.sidebar.page_link(
+#         "pages/40_Favs.py", label="Favs", icon="❤️"
+#     )
 
 def WorldBankVizNav():
     st.sidebar.page_link(
         "pages/01_World_Bank_Viz.py", label="World Bank Visualization", icon="🏦"
+    )
+        st.sidebar.page_link(
+        "pages/40_Favs.py", label="Favs", icon="❤️"
     )
 
 
@@ -63,7 +70,6 @@ def AdminPageNav():
         "pages/21_ML_Model_Mgmt.py", label="ML Model Management", icon="🏢"
     )
 
-
 # --------------------------------Links Function -----------------------------------------------
 def SideBarLinks(show_home=False):
     """
@@ -71,7 +77,7 @@ def SideBarLinks(show_home=False):
     """
 
     # add a logo to the sidebar always
-    st.sidebar.image("assets/tvlogo.png", width=150)
+    st.sidebar.image("assets/logo.png", width=150)
 
     # If there is no logged in user, redirect to the Home (Landing) page
     if "authenticated" not in st.session_state:
@@ -89,6 +95,7 @@ def SideBarLinks(show_home=False):
         if st.session_state["role"] == "pol_strat_advisor":
             PolStratAdvHomeNav()
             WorldBankVizNav()
+            Favorites()
             MapDemoNav()
 
         # If the user role is usaid worker, show the Api Testing page

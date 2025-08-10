@@ -53,7 +53,7 @@ if st.button("Act as Amanda, system administrator",
     st.session_state['role'] = 'pol_strat_advisor'
     # we add the first name of the user (so it can be displayed on 
     # subsequent pages). 
-    st.session_state['first_name'] = 'John'
+    st.session_state['first_name'] = 'Amanda'
     # finally, we ask streamlit to switch to another page, in this case, the 
     # landing page for this particular user type
     logger.info("Logging in as Political Strategy Advisor Persona")
@@ -64,7 +64,7 @@ if st.button('Act as Sally, an aspiring filmmaker',
             use_container_width=True):
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'usaid_worker'
-    st.session_state['first_name'] = 'Mohammad'
+    st.session_state['first_name'] = 'Sally'
     st.switch_page('pages/10_USAID_Worker_Home.py')
 
 if st.button('Act as Alex, data analyst', 
@@ -72,7 +72,7 @@ if st.button('Act as Alex, data analyst',
             use_container_width=True):
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'administrator'
-    st.session_state['first_name'] = 'SysAdmin'
+    st.session_state['first_name'] = 'Alex'
     st.switch_page('pages/20_Admin_Home.py')
 
 if st.button('Act as John, casual binger', 
@@ -80,7 +80,7 @@ if st.button('Act as John, casual binger',
             use_container_width=True):
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'administrator'
-    st.session_state['first_name'] = 'SysAdmin'
+    st.session_state['first_name'] = 'John'
     st.switch_page('pages/20_Admin_Home.py')
 
 
