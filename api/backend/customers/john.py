@@ -67,8 +67,30 @@ def article_genre():
     return the_response
 
 #------------------------------------------------------------
-# Assign a genre to existing watchlist
-# COME BACK TO THIS!!!
+# Get shows ordered by genre
+@john.route('/shows/genre/<genreId>', methods=['GET'])
+def get_shows_by_genre(genreId):
+    cursor = db.get_db().cursor()
+    cursor.execute('''SELECT DISTINCT s.showID, s.title, s.rating, s.releaseDate, s.season, s.ageRating, s.writers, s.viewers, g.genre, g.description as genre_description
+FROM Shows s 
+JOIN show_genre sg ON s.showID = sg.showID
+JOIN Genre g ON sg.genreID = g.genreID
+WHERE g.genreID = %s
+ORDER BY s.title ASC;
+    ''', (genreId,))
+    
+    theData = cursor.fetchall()
+    
+    if not theData:
+        response_data = {'message': 'No shows found for this genre', 'genreID': genreId}
+        the_response = make_response(jsonify(response_data))
+        the_response.status_code = 404
+        return the_response
+    
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
+    return the_response
+
 
 #------------------------------------------------------------
 # Retrieves all shows based on certain streaming platform
