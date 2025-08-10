@@ -34,17 +34,17 @@ SideBarLinks(show_home=True)
 
 # set the title of the page and provide a simple prompt. 
 logger.info("Loading the Home page of the app")
-st.title('CS 3200 Project Template')
+st.title('SpoilerAlert for Show Addicts')
 st.write('\n\n')
 # st.write('### Overview:')
 # st.write('\n')
-st.write('#### HI! As which user would you like to log in?')
+st.write('#### Hi! As which user would you like to log in?')
 
 # For each of the user personas for which we are implementing
 # functionality, we put a button on the screen that the user 
 # can click to MIMIC logging in as that mock user. 
 
-if st.button("Act as John, a Political Strategy Advisor", 
+if st.button("Act as Amanda, system administrator", 
             type = 'primary', 
             use_container_width=True):
     # when user clicks the button, they are now considered authenticated
@@ -59,7 +59,7 @@ if st.button("Act as John, a Political Strategy Advisor",
     logger.info("Logging in as Political Strategy Advisor Persona")
     st.switch_page('pages/00_Pol_Strat_Home.py')
 
-if st.button('Act as Mohammad, an USAID worker', 
+if st.button('Act as Sally, an aspiring filmmaker', 
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
@@ -67,7 +67,15 @@ if st.button('Act as Mohammad, an USAID worker',
     st.session_state['first_name'] = 'Mohammad'
     st.switch_page('pages/10_USAID_Worker_Home.py')
 
-if st.button('Act as System Administrator', 
+if st.button('Act as Alex, data analyst', 
+            type = 'primary', 
+            use_container_width=True):
+    st.session_state['authenticated'] = True
+    st.session_state['role'] = 'administrator'
+    st.session_state['first_name'] = 'SysAdmin'
+    st.switch_page('pages/20_Admin_Home.py')
+
+if st.button('Act as John, casual binger', 
             type = 'primary', 
             use_container_width=True):
     st.session_state['authenticated'] = True
