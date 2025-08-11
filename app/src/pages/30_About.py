@@ -13,7 +13,7 @@ st.markdown(
     
      From theatregoers and casual fans to performance artists and professionals in the field, this app offers a dedicated space 
      for users to rate, review, and discuss television, plays, and musicals: mediums that are often overlooked on mainstream 
-     review platforms and relegated to non-dedicated forums such as Twitter or Reddit. 
+     review platforms and relegated to non-dedicated forums such as Twitter, Instagram or Reddit. 
      
     Stay tuned for more information and features to come!
     """
