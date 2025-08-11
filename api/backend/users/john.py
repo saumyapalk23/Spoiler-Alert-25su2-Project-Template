@@ -22,12 +22,13 @@ john = Blueprint('john', __name__)
 def get_shows_by_date():
 
     cursor = db.get_db().cursor()
-    cursor.execute('''SELECT showId, title, releaseDate, genre, description
-FROM shows 
-ORDER BY releaseDate DESC;
+    cursor.execute('''
+    SELECT showId, title, releaseDate, genre, description
+    FROM shows
+    ORDER BY releaseDate DESC; 
     ''')
-    
     theData = cursor.fetchall()
+    
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
     return the_response
