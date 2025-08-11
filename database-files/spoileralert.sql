@@ -54,7 +54,7 @@ DROP TABLE IF EXISTS reviews;
 CREATE TABLE IF NOT EXISTS reviews(
 	writtenrevID INT NOT NULL PRIMARY KEY,
     userId INT NOT NULL,
-    showID INT NOT NULL,
+    showId INT NOT NULL,
     createdAt DATETIME DEFAULT NOW(),
     rating DECIMAL(3, 1) CHECK (rating BETWEEN 0.0 AND 5.0),
     content text,
