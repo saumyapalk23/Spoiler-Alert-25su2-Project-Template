@@ -21,7 +21,7 @@ amanda = Blueprint('amanda', __name__)
 def top_reviewed():
 
     cursor = db.get_db().cursor()
-    cursor.execute('''SELECT s.showId, s.title, COUNT(r.reviewId) AS num_reviews
+    cursor.execute('''SELECT s.showId, s.title, COUNT(r.writtenrevId) AS num_reviews
 FROM shows s JOIN reviews r ON s.showId = r.showId
 GROUP BY s.showId, s.title
 ORDER BY num_reviews DESC
@@ -56,9 +56,10 @@ LIMIT 3;
 @amanda.route('/articles/genres', methods=['GET'])
 def article_genre():
     cursor = db.get_db().cursor()
-    cursor.execute('''SELECT DISTINCT G.genre FROM articles a 
-    JOIN articles_genres ag ON a.articleID = ag.articleID 
-    JOIN genres g ON ag.genreID = g.genreID
+    cursor.execute('''SELECT DISTINCT g.title 
+    FROM genre g JOIN article_genre ag 
+    ON ag.genreId = g.genreId
+    ORDER BY g.title;
     ''')
     theData = cursor.fetchall()
     the_response = make_response(jsonify(theData))

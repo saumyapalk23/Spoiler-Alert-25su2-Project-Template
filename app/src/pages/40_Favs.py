@@ -11,7 +11,7 @@ if st.button("Show Top 5 Most Reviewed Shows"):
     try:
         resp = requests.get('http://api:4000/admin/shows/most-reviewed')
         
-        st.write(f"Status Code: {resp.status_code}")
+        
         shows = resp.json()  # This is where the error happens
         for show in shows:
             st.write(f"{show['title']} (ID: {show['showId']}), Reviews: {show['num_reviews']}")
@@ -37,7 +37,7 @@ if st.button("Show Article Genres"):
         for g in genres:
             # Adjust key name depending on backend response
             genre_name = g.get('genre') or g.get('name') or str(g)
-            st.write(f"- {genre_name}")
+            st.write(f"- {g['title']}")
     except Exception as e:
         st.error(f"Failed to load genres: {e}")
 

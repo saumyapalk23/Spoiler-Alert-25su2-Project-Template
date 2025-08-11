@@ -33,10 +33,10 @@ try:
                 st.write(f"**Age Rating:** {age_rating}")
                 st.write(f"**Streaming Platform:** {streaming_platform}")
 
-                # Optional button for further action
-                if st.button(f"View Details", key=f"view_{show_id}"):
-                    st.session_state["selected_show_id"] = show_id
-                    st.switch_page("pages/Show_Profile.py")
+    #             # Optional button for further action
+    #             if st.button(f"View Details", key=f"view_{show_id}"):
+    #                 st.session_state["selected_show_id"] = show_id
+    #                 st.switch_page("pages/Show_Profile.py")
 
     else:
         st.error(f"Failed to fetch shows from API. Status code: {response.status_code}")
