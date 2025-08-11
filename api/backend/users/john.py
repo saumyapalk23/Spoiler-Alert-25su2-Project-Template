@@ -67,9 +67,12 @@ def search_shows():
 @john.route('/articles/genres', methods=['GET'])
 def article_genre():
     cursor = db.get_db().cursor()
-    cursor.execute('''SELECT DISTINCT G.genre FROM articles a 
-    JOIN articles_genres ag ON a.articleID = ag.articleID 
-    JOIN genres g ON ag.genreID = g.genreID
+    cursor.execute('''
+        SELECT DISTINCT g.genre 
+        FROM articles a 
+        JOIN articles_genres ag ON a.articleID = ag.articleID 
+        JOIN genres g ON ag.genreId = g.genreId
+        ORDER BY g.genre ASC;
     ''')
     theData = cursor.fetchall()
     the_response = make_response(jsonify(theData))
