@@ -17,11 +17,6 @@ def PolStratAdvHomeNav():
         "pages/00_Pol_Strat_Home.py", label="Political Strategist Home", icon="👤"
     )
 
-def Favorites():
-    st.sidebar.page_link(
-        "pages/40_Favs.py", label="Favs", icon="❤️"
-    )
-
 def WorldBankVizNav():
     st.sidebar.page_link(
         "pages/01_World_Bank_Viz.py", label="World Bank Visualization", icon="🏦"
@@ -61,6 +56,10 @@ def AdminPageNav():
     st.sidebar.page_link("pages/20_Admin_Home.py", label="System Admin", icon="🖥️")
     st.sidebar.page_link(
         "pages/21_ML_Model_Mgmt.py", label="ML Model Management", icon="🏢"
+    )
+def Favorites():
+    st.sidebar.page_link(
+        "pages/40_Favs.py", label="Favs", icon="❤️"
     )
 
 # --------------------------------Links Function -----------------------------------------------
