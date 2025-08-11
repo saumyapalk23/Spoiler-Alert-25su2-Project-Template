@@ -22,7 +22,7 @@ if st.button('View World Bank Data Visualization',
 if st.button('View Favorites', 
              type='primary',
              use_container_width=True):
-  st.switch_page('pages/40_Favs.py')
+  st.switch_page('pages/40_amanda.py')
 
 if st.button('View World Map Demo', 
              type='primary',

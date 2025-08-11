@@ -59,7 +59,7 @@ def AdminPageNav():
     )
 def Favorites():
     st.sidebar.page_link(
-        "pages/40_Favs.py", label="Favs", icon="❤️"
+        "pages/40_amanda.py", label="Favs", icon="❤️"
     )
 
 # --------------------------------Links Function -----------------------------------------------

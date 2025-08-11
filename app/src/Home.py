@@ -81,7 +81,7 @@ if st.button('Act as Amanda, system administrator',
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'administrator'
     st.session_state['first_name'] = 'John'
-    st.switch_page('pages/40_Favs.py')
+    st.switch_page('pages/40_amanda.py')
 
 
 
