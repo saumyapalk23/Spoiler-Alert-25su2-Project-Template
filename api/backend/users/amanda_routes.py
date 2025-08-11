@@ -39,7 +39,7 @@ LIM 5;
 def most_recent():
 
     cursor = db.get_db().cursor()
-    cursor.execute('''SSELECT articleId, title, content
+    cursor.execute('''SELECT articleId, title, content
 FROM articles
 ORDER BY createdAt DESC
 LIM 3;
@@ -81,7 +81,7 @@ VALUES ({userId}, {favoriteID}, {showId}, {actorId});
 #------------------------------------------------------------
 # removes a show/actor to favorites
 @amanda.route('/users/<userId>/favorites/', methods=['DELETE'])
-def user_favorite():
+def delete_favorite():
     cursor = db.get_db().cursor()
     cursor.execute('''DELETE FROM favorites (userID, favoriteID)
 VALUES ({userId}, {favoriteID}, {showId}, {actorId});
@@ -94,7 +94,7 @@ VALUES ({userId}, {favoriteID}, {showId}, {actorId});
 #------------------------------------------------------------
 # retrieves most popular reviews by comments
 @amanda.route('/reviews/most-popular', methods=['GET'])
-def user_favorite():
+def get_pop():
     cursor = db.get_db().cursor()
     cursor.execute('''SELECT reviewId, title, COUNT(comments) as num_comments
 FROM reviews JOIN comments ON reviews.writtenrevID = comments.commentId
@@ -111,7 +111,7 @@ LIM 3;
 #------------------------------------------------------------
 # users submit/create feedback
 @amanda.route('/users/<userId>/feedback/', methods=['POST'])
-def user_favorite():
+def get_fb():
     cursor = db.get_db().cursor()
     cursor.execute('''INSERT INTO userFeedback(feedbackId, title, content, createdAt)
 VALUES ({feedbackId}, {title}, {content}, {createdAt});

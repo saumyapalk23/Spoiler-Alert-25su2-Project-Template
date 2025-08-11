@@ -13,82 +13,93 @@ from backend.ml_models.model01 import predict
 #------------------------------------------------------------
 # Create a new Blueprint object, which is a collection of 
 # routes.
-sally = Blueprint('sally', __name__)
+sally = Blueprint('Sally', __name__)
+
 
 #------------------------------------------------------------
-# Users add a rating to a show
-@sally.route('/shows/{id}', methods=['POST'])
-def user_rating():
+# Add a rating for a particular show
+@sally.route('/shows/<int:showId>', methods=['POST'])
+def add_show_rating(showId):
+    data = request.get_json()
+    rating = data.get('rating')
+
     cursor = db.get_db().cursor()
     cursor.execute('''
-INSERT INTO shows (showID, title, rating, releaseDate, season, ageRating)
-VALUES ({showID}, '{title}', {rating}, '{releaseDate}', {season}, '{ageRating}');''')
+        INSERT INTO ratings (showId, rating)
+        VALUES (%s, %s);
+    ''', (showId, rating))
     db.get_db().commit()
-    theData = cursor.fetchall()
-    the_response = make_response(jsonify(theData))
-    the_response.status_code = 200
+
+    the_response = make_response(jsonify({"message": "Rating added successfully"}))
+    the_response.status_code = 201
     return the_response
 
 #------------------------------------------------------------
-# Retrieve all of a user's watchlists
-@sally.route('/users/<id>/watchlist', methods=['GET'])
-def get_watchlists():
+# Delete an existing watchlist for a user
+@sally.route('/users/<int:userId>/watchlists/<int:watchlistId>', methods=['DELETE'])
+def delete_watchlist(userId, watchlistId):
     cursor = db.get_db().cursor()
     cursor.execute('''
-    SELECT name, showId
-    FROM watchlist
-    WHERE userId = %s
-    ORDER BY createdAt DESC;''', (id, ))
-    theData = cursor.fetchall()
-    the_response = make_response(jsonify(theData))
-    the_response.status_code = 200
-    return the_response
-
-#------------------------------------------------------------
-# Create a watchlist
-@sally.route('/users/<id>/watchlist', methods=['POST'])
-def addto_watchlist():
-    cursor = db.get_db().cursor()
-    # TODO: watchId, name, showId
-    cursor.execute('''
-    INSERT INTO watchlist (%s,%s,%s,%s,)''', (watchId, id, name, showId))
+        DELETE FROM watchlists
+        WHERE watchlistId = %s AND userId = %s;
+    ''', (watchlistId, userId))
     db.get_db().commit()
-    theData = cursor.fetchall()
-    the_response = make_response(jsonify(theData))
+
+    if cursor.rowcount == 0:
+        the_response = make_response(jsonify({"error": "Watchlist not found"}))
+        the_response.status_code = 404
+        return the_response
+
+    the_response = make_response(jsonify({"message": "Watchlist deleted successfully"}))
     the_response.status_code = 200
     return the_response
 
-#------------------------------------------------------------
-# Add shows to watchlist
-@sally.route('users/<u_id>/watchlist/<name>/shows/<s_id>', methods=['POST'])
-def addto_watchlist():
-    cursor = db.get_db().cursor()
-    # TODO: watchId, name, showId
-    cursor.execute('''
-    INSERT INTO watchlist (%s,%s,%s,%s,)''', (_, u_id, name, s_id))
-    db.get_db().commit()
-    theData = cursor.fetchall()
-    the_response = make_response(jsonify(theData))
-    the_response.status_code = 200
-    return the_response
+# #------------------------------------------------------------
+# # Update customer info for customer with particular userID
+# #   Notice the manner of constructing the query.
+# @customers.route('/customers', methods=['PUT'])
+# def update_customer():
+#     current_app.logger.info('PUT /customers route')
+#     cust_info = request.json
+#     cust_id = cust_info['id']
+#     first = cust_info['first_name']
+#     last = cust_info['last_name']
+#     company = cust_info['company']
 
-#------------------------------------------------------------
-# Delete shows from watchlist
+#     query = 'UPDATE customers SET first_name = %s, last_name = %s, company = %s where id = %s'
+#     data = (first, last, company, cust_id)
+#     cursor = db.get_db().cursor()
+#     r = cursor.execute(query, data)
+#     db.get_db().commit()
+#     return 'customer updated!'
 
-#------------------------------------------------------------
-# Recommendations from age group
+# #------------------------------------------------------------
+# # Get customer detail for customer with particular userID
+# #   Notice the manner of constructing the query. 
+# @customers.route('/customers/<userID>', methods=['GET'])
+# def get_customer(userID):
+#     current_app.logger.info('GET /customers/<userID> route')
+#     cursor = db.get_db().cursor()
+#     cursor.execute('SELECT id, first_name, last_name FROM customers WHERE id = {0}'.format(userID))
+    
+#     theData = cursor.fetchall()
+    
+#     the_response = make_response(jsonify(theData))
+#     the_response.status_code = 200
+#     return the_response
 
-#------------------------------------------------------------
-# User adds a user to following
+# #------------------------------------------------------------
+# # Makes use of the very simple ML model in to predict a value
+# # and returns it to the user
+# @customers.route('/prediction/<var01>/<var02>', methods=['GET'])
+# def predict_value(var01, var02):
+#     current_app.logger.info(f'var01 = {var01}')
+#     current_app.logger.info(f'var02 = {var02}')
 
-#------------------------------------------------------------
-# User removes a user from following
+#     returnVal = predict(var01, var02)
+#     return_dict = {'result': returnVal}
 
-#------------------------------------------------------------
-# Creates a new review for a show
-
-#------------------------------------------------------------
-# Updates a review
-
-#------------------------------------------------------------
-# Deletes a review
+#     the_response = make_response(jsonify(return_dict))
+#     the_response.status_code = 200
+#     the_response.mimetype = 'application/json'
+#     return the_response
