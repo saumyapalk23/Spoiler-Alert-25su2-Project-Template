@@ -8,11 +8,13 @@ st.write("# About this App")
 
 st.markdown(
     """
-    This is a demo app for Data and Software in International Government and Politics Dialogue 2025 Project Course.  
-
-    The goal of this demo is to provide information on the tech stack 
-    being used as well as demo some of the features of the various platforms. 
-
+    
+    Welcome to Spoiler Alert! We are an app dedicated to letting you enjoy and review your favorite TV shows and onstage performances.
+    
+     From theatregoers and casual fans to performance artists and professionals in the field, this app offers a dedicated space 
+     for users to rate, review, and discuss television, plays, and musicals: mediums that are often overlooked on mainstream 
+     review platforms and relegated to non-dedicated forums such as Twitter or Reddit. 
+     
     Stay tuned for more information and features to come!
     """
 )
