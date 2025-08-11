@@ -21,7 +21,11 @@ amanda = Blueprint('amanda', __name__)
 def top_reviewed():
 
     cursor = db.get_db().cursor()
-    cursor.execute('''
+    cursor.execute('''SELECT s.showId, s.title, COUNT(r.reviewId) AS num_reviews
+FROM shows s JOIN reviews r ON s.showId = r.showId
+GROUP BY s.showId, s.title
+ORDER BY num_reviews DESC
+LIM 5;
     ''')
     
     theData = cursor.fetchall()
