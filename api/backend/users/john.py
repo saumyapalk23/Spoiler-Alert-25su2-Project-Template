@@ -105,20 +105,25 @@ def get_shows_by_genre(genreId):
     the_response.status_code = 200
     return the_response
 
-
 #------------------------------------------------------------
 # Retrieves all shows based on certain streaming platform
-@john.route('/shows/streaming_platform/<platformId>', methods=['GET'])
+@john.route('/shows/streaming_platform/<int:platformId>', methods=['GET'])
 def get_shows_by_platform(platformId):
     cursor = db.get_db().cursor()
     cursor.execute('''SELECT s.showID, s.title, s.rating, s.releaseDate, s.season, s.ageRating, s.writers, s.viewers, sp.streaming_platform
-FROM Shows s 
+FROM shows s 
 JOIN streaming_pltfm sp ON s.showID = sp.showID
-WHERE sp.streaming_platform = %s
+WHERE sp.platformID = %s
 ORDER BY s.title ASC;
     ''', (platformId,))
-    
     theData = cursor.fetchall()
+
+    if not theData: 
+        response_data = {'message': 'No shows found for this streaming platform', 'platformId': platformId}
+        the_response = make_response(jsonify(response_data))
+        the_response.status_code = 404
+        return the_response
+    
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
     return the_response
