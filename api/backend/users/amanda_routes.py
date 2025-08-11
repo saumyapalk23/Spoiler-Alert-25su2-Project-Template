@@ -25,7 +25,7 @@ def top_reviewed():
 FROM shows s JOIN reviews r ON s.showId = r.showId
 GROUP BY s.showId, s.title
 ORDER BY num_reviews DESC
-LIM 5;
+LIMIT 5;
     ''')
     
     theData = cursor.fetchall()
@@ -42,7 +42,7 @@ def most_recent():
     cursor.execute('''SELECT articleId, title, content
 FROM articles
 ORDER BY createdAt DESC
-LIM 3;
+LIMIT 3;
     ''')
     
     theData = cursor.fetchall()
@@ -100,7 +100,7 @@ def get_pop():
 FROM reviews JOIN comments ON reviews.writtenrevID = comments.commentId
 GROUP BY reviewId 
 ORDER BY num_comments DESC
-LIM 3;
+LIMIT 3;
 );
     ''')
     theData = cursor.fetchall()

@@ -12,8 +12,6 @@ if st.button("Show Top 5 Most Reviewed Shows"):
         resp = requests.get('http://api:4000/admin/shows/most-reviewed')
         
         st.write(f"Status Code: {resp.status_code}")
-        st.write(f"Raw Response: {resp.text}")  # Log raw response
-
         shows = resp.json()  # This is where the error happens
         for show in shows:
             st.write(f"{show['title']} (ID: {show['showId']}), Reviews: {show['num_reviews']}")
