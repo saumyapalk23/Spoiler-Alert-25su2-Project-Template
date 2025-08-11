@@ -35,6 +35,40 @@ def add_show_rating(showId):
     return the_response
 
 #------------------------------------------------------------
+# Retrive all watchlists for a user 
+@sally.route('/users/<int:userId>/watchlists', methods=['GET'])
+def get_user_watchlists(userId): 
+    cursor = db.get_db().cursor()
+    cursor.execute('''
+        SELECT watchlistId, userId, name, createdAt
+        FROM watchlists
+        WHERE userId = %s;
+    ''', (userId))
+    theData = cursor.fetchall()
+
+    the_response = make_response(jsonify())
+    the_response.status_code = 200
+    return the_response
+
+#------------------------------------------------------------
+# Create a new watchlist for user
+@sally.route('/users/<int:userId>/watchlists', methods=['POST'])
+def create_watchlist(userId): 
+    data = request.get_json()
+    name = data.get('name')
+
+    cursor = db.get_db().cursor()
+    cursor.execute('''
+        INSERT INTO watchlists (userId, name)
+        VALUES (%s, %s);
+    ''', (userId, name))
+    db.get_db().commit()
+
+    the_response = make_response(jsonify({"message": "Watchlist created"}))
+    the_response.status_code = 201
+    return the_response
+
+#------------------------------------------------------------
 # Delete an existing watchlist for a user
 @sally.route('/users/<int:userId>/watchlists/<int:watchlistId>', methods=['DELETE'])
 def delete_watchlist(userId, watchlistId):
