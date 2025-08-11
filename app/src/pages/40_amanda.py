@@ -65,13 +65,11 @@ st.subheader("Remove a Favorite")
 user_id_del = st.text_input("User ID (remove favorite)", key="user_del")
 fav_id_del = st.text_input("Favorite ID", key="fav_del")
 show_id_del = st.text_input("Show ID", key="show_del")
-actor_id_del = st.text_input("Actor ID", key="actor_del")
 if st.button("Remove Favorite"):
     try:
         payload = {
             "favoriteID": fav_id_del,
             "showId": show_id_del,
-            "actorId": actor_id_del,
         }
         resp = requests.delete(f"http://api:4000/admin/users/{user_id_del}/favorites/", json=payload)
         if resp.status_code == 200:

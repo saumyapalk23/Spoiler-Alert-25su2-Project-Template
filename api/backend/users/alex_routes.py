@@ -29,4 +29,17 @@ LIMIT 5;
     the_response.status_code = 200
     return the_response
 
+# ------------------------------------------------------------
+# Get all customers from the system
+@alex.route('/users', methods=['GET'])
+def get_userCount():
+    cursor = db.get_db().cursor()
+    cursor.execute('''SELECT COUNT(userId) as num_users
+FROM users
+ORDER BY num_users;
+   ''')
+    theData = cursor.fetchall()
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
+    return the_response
 

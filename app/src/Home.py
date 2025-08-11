@@ -34,7 +34,7 @@ SideBarLinks(show_home=True)
 
 # set the title of the page and provide a simple prompt. 
 logger.info("Loading the Home page of the app")
-st.title('SpoilerAlert for Show Addicts')
+st.title('SpoilerAlert')
 st.write('\n\n')
 # st.write('### Overview:')
 # st.write('\n')
