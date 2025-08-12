@@ -34,29 +34,19 @@ def Follows():
     st.sidebar.page_link("pages/02_sally_follows.py", label="Follows", icon="🗺️")
 
 
-## ------------------------ Examples for Role of usaid_worker ------------------------
+## ------------------------ Casual Binger Role ------------------------
 def ShowSearch():
     st.sidebar.page_link("pages/12_ShowSearch.py", label="Search for shows", icon="🔎")
 
 
 def Comments():
     st.sidebar.page_link(
-        "pages/11_Comments.py", label="Comments", icon="💬"
-    )
+        "pages/11_Comments.py", label="Comments", icon="💬")
 
 
-def ClassificationNav():
+def ShowsFiltering():
     st.sidebar.page_link(
-        "pages/13_Classification.py", label="Classification Demo", icon="🌺"
-    )
-
-
-# def NgoDirectoryNav():
-#     st.sidebar.page_link("pages/14_NGO_Directory.py", label="NGO Directory", icon="📁")
-
-
-# def AddNgoNav():
-#     st.sidebar.page_link("pages/15_Add_NGO.py", label="Add New NGO", icon="➕")
+        "pages/13_Shows.py", label="Shows", icon="🎬")
 
 
 #### ------------------------ System Admin Role ------------------------
@@ -120,9 +110,8 @@ def SideBarLinks(show_home=False):
         if st.session_state["role"] == "viewer":
             Comments()
             ShowSearch()
-            ClassificationNav()
-            # NgoDirectoryNav()
-            # AddNgoNav()
+            ShowsFiltering()
+
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state["role"] == "analyst":

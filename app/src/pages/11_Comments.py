@@ -14,7 +14,7 @@ SideBarLinks()
 st.title("Comments")
 
 # Create Comment
-st.subheader("Create Comment")
+st.subheader("Create New Comment")
 col1, col2 = st.columns(2)
 with col1:
     review_id_comment = st.number_input("Review ID", min_value=1, key="review_comment")

@@ -61,13 +61,8 @@ def main():
             st.write(f"**Streaming Platform:** {streaming_platform}")
             
 
-if st.button('View the Simple API Demo', 
-             type='primary',
-             use_container_width=True):
-  st.switch_page('pages/12_ShowSearch.py')
-
 if st.button("View Classification Demo",
              type='primary',
              use_container_width=True):
-  st.switch_page('pages/13_Classification.py')
+  st.switch_page('pages/13_Shows.py')
   
