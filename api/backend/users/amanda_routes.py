@@ -52,19 +52,30 @@ LIMIT 3;
 
 
 #------------------------------------------------------------
-# Get genres of all articles
-@amanda.route('/articles/genres', methods=['GET'])
-def article_genre():
+# Get genres of three most recent articles
+@amanda.route('/articles/most-recent/genres', methods=['GET'])
+def get_recent_articles_genres():
     cursor = db.get_db().cursor()
-    cursor.execute('''SELECT DISTINCT g.title 
-    FROM genre g JOIN article_genre ag 
-    ON ag.genreId = g.genreId
-    ORDER BY g.title;
+    cursor.execute('''
+        SELECT a.articleID, a.title, a.createdAt, g.title as genre_title
+        FROM articles a
+        JOIN article_genre ag ON a.articleID = ag.articleId
+        JOIN genre g ON ag.genreId = g.genreId
+        JOIN (
+            SELECT articleID 
+            FROM articles 
+            ORDER BY createdAt DESC 
+            LIMIT 3
+        ) recent_articles ON a.articleID = recent_articles.articleID
+        ORDER BY a.createdAt DESC, g.title;
     ''')
-    theData = cursor.fetchall()
-    the_response = make_response(jsonify(theData))
+    
+    genres = cursor.fetchall()
+    
+    the_response = make_response(jsonify({"genres": genres}))
     the_response.status_code = 200
     return the_response
+
 
 #------------------------------------------------------------
 # adds a show/actor to favorites
@@ -101,8 +112,7 @@ def get_pop():
 FROM reviews JOIN comments ON reviews.writtenrevID = comments.commentId
 GROUP BY reviewId 
 ORDER BY num_comments DESC
-LIMIT 3;
-);
+LIMIT 3;  
     ''')
     theData = cursor.fetchall()
     the_response = make_response(jsonify(theData))
@@ -120,7 +130,7 @@ def get_fb(userId):
     userId = the_data['userId']
     query = f'''
         INSERT INTO userFeedback (title, content, userId)
-        VALUES (%s, %s, %s)'''
+        VALUES (%s, %s, %s);'''
     current_app.logger.info(query)
 
     # executing and committing the insert statement 
@@ -128,6 +138,6 @@ def get_fb(userId):
     cursor.execute(query, (title, content, userId))
     db.get_db().commit()
     
-    response = make_response("Successfully added product")
+    response = make_response("Successfully added feedback!")
     response.status_code = 200
     return 'feedback submitted!'

@@ -337,7 +337,7 @@ VALUES (1, 4.5),
       (14, 4.0);
 
 
-INSERT INTO shows (showID, title, rating, releaseDate, season, ageRating, streamingPlatform) VALUES
+INSERT INTO shows (showId, title, rating, releaseDate, season, ageRating, streamingPlatform) VALUES
     (1, 'Breaking Bad', 2.0, '1981-01-27', 8, 'R', 'Yakitri'),
     (2, 'Game of Thrones', 0.8, '2012-10-09', 17, 'PG-13', 'Kazio'),
     (3, 'Friends', 3.4, '1942-08-12', 13, 'NC-17', 'Babbleset'),
@@ -393,7 +393,7 @@ VALUES
    (1, 13),
    (2, 45),
    (400, 34),
-   (410, 43);
+   (410, 35);
 
 INSERT INTO watchlist (toWatchId, userId, numberOfElements, createdAt, name, showId)
 VALUES (400, 1, 2, NOW(), 'Must Watch', 18),
@@ -516,8 +516,8 @@ VALUES (1, 10),
       (2, 11);
 
 INSERT INTO article_genre (genreId, articleId)
-VALUES (701, 800),
-      (700, 801);
+VALUES (12, 800),
+      (16, 801);
 
 INSERT INTO com_reviews (commentId, reviewId)
 VALUES (300, 200),

@@ -2,57 +2,54 @@ import streamlit as st
 import requests
 from streamlit_extras.app_logo import add_logo
 from modules.nav import SideBarLinks
+import logging
+logger = logging.getLogger(__name__)
+import streamlit as st
+import pandas as pd
+from sklearn import datasets
+from sklearn.ensemble import RandomForestClassifier
+from streamlit_extras.app_logo import add_logo
+from modules.nav import SideBarLinks
 
 # Initialize sidebar
 SideBarLinks()
 
+import streamlit as st
+import pandas as pd
+import requests
+
 st.title(f"Welcome Analyst {st.session_state['first_name']}.")
 
-API_URL1 = "http://web-api:4000/alex/shows"
-def fetch_shows():
+# Fetch data from the API
+try:
+    shows = requests.get('http://api:4000/alex/shows').json()
+except requests.exceptions.RequestException as e:
+    st.error(f"Error fetching shows: {e}")
+    shows = []
+
+# Get the slider value
+selected_szn = st.slider("Choose season:", 0, 20, (0, 20))
+
+# Filter shows based on the slider value
+filtered_shows = []
+for show in shows:
     try:
-        response = requests.get(API_URL1)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            st.error(f"Failed to fetch shows. Status code: {response.status_code}")
-            return []
-    except requests.exceptions.RequestException as e:
-        st.error(f"Error connecting to API: {e}")
-        return []
+        # Safely convert the season value to an integer
+        season_value = int(show.get('season', 0))
+        if selected_szn[0] <= season_value <= selected_szn[1]:
+            filtered_shows.append(show)
+    except (ValueError, TypeError):
+        # This block catches errors where 'season' isn't a number
+        # It's a good practice to log or handle this, but for now, we just continue.
+        continue
 
-def main():
-    st.title("Shows Filtered by Number of Seasons")
+# Display the results
+if filtered_shows:
+    st.write('Here are the shows you requested!')
+    st.dataframe(filtered_shows)
+else:
+    st.write('No shows found that meet your criteria.')
 
-    shows = fetch_shows()
-    if not shows:
-        return
-
-    # Extract max seasons from shows for slider max
-    max_seasons = max(show.get("totalSeasons", 1) for show in shows)
-
-    # Slider for max number of seasons
-    max_selected = st.slider("Select max number of seasons to display:", 1, max_seasons, 3)
-
-    # Filter shows
-    filtered_shows = [show for show in shows if show.get("totalSeasons", 0) <= max_selected]
-
-    st.write(f"Showing {len(filtered_shows)} shows with {max_selected} or fewer seasons:")
-
-    for show in filtered_shows:
-        title = show.get("title", "Untitled")
-        total_seasons = show.get("totalSeasons", "N/A")
-        rating = show.get("rating", "N/A")
-        release_date = show.get("releaseDate", "Unknown")
-        age_rating = show.get("ageRating", "N/A")
-        streaming_platform = show.get("streamingPlatform", "Unknown")
-
-        with st.expander(f"{title} (Total Seasons: {total_seasons})"):
-            st.write(f"**Rating:** {rating}")
-            st.write(f"**Release Date:** {release_date}")
-            st.write(f"**Age Rating:** {age_rating}")
-            st.write(f"**Streaming Platform:** {streaming_platform}")
-            
 # ----------------------------------------------------------------------------
 API_URL2 = "http://web-api:4000/alex/users"
 if st.button("Active User Count", key="active"):

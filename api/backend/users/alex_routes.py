@@ -14,30 +14,24 @@ from backend.db_connection import db
 alex = Blueprint('alex', __name__)
 
 # ------------------------------------------------------------
-# Get all customers from the system
+# Get number of szns from the system
 @alex.route('/shows', methods=['GET'])
 def get_szn():
-    cursor = db.get_db().cursor()
-    cursor.execute('''SELECT
-    showId,
-    title,
-    seasons,     
-    rating,
-    releaseDate,
-    ageRating,
-    streamingPlatform
-FROM
-    shows
-WHERE
-    seasons <= :max_seasons
-ORDER BY
-    title;
-    ''')
-    theData = cursor.fetchall()
-    the_response = make_response(jsonify(theData))
-    the_response.status_code = 200
-    return the_response
-
+        cursor = db.get_db().cursor()
+        cursor.execute('''
+            SELECT
+                showId,
+                title,
+                season     
+            FROM
+                shows
+            ORDER BY
+                season, title;
+        ''')
+        theData = cursor.fetchall()
+        the_response = make_response(jsonify(theData))
+        the_response.status_code = 200
+        return the_response
 # ------------------------------------------------------------
 # Get all customers from the system
 @alex.route('/users', methods=['GET'])
