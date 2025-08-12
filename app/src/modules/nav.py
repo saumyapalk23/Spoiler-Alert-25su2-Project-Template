@@ -31,9 +31,9 @@ def ApiTestNav():
     st.sidebar.page_link("pages/12_API_Test.py", label="Test the API", icon="🛜")
 
 
-def PredictionNav():
+def Comments():
     st.sidebar.page_link(
-        "pages/11_Prediction.py", label="Regression Prediction", icon="📈"
+        "pages/11_Comments.py", label="Comments", icon="💬"
     )
 
 
@@ -102,7 +102,7 @@ def SideBarLinks(show_home=False):
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state["role"] == "viewer":
-            PredictionNav()
+            Comments()
             ApiTestNav()
             ClassificationNav()
             NgoDirectoryNav()
