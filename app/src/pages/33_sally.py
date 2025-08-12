@@ -8,20 +8,26 @@ SideBarLinks()
 
 st.title("Sally API Demo")
 
-# Update Show Rating
-st.subheader("Update Show Rating")
-show_id_rating = st.number_input("Show ID", min_value=1, key="show_rating")
-new_rating = st.number_input("New Rating", min_value=0.0, max_value=5.0, step=0.1, key="rating")
-if st.button("Update Show Rating"):
+# Update Review Rating
+st.subheader("Update Review Rating")
+col1, col2 = st.columns(2)
+with col1:
+    show_id_rating = st.number_input("Show ID", min_value=1, key="show_rating")
+    review_id_rating = st.number_input("Review ID", min_value=1, key="review_rating_id")
+with col2:
+    new_rating = st.number_input("New Rating", min_value=0.0, max_value=5.0, step=0.1, key="rating")
+
+if st.button("Update Review Rating"):
     try:
         payload = {"rating": new_rating}
-        resp = requests.put(f"http://api:4000/sally/shows/{show_id_rating}", json=payload)
+        resp = requests.put(f"http://api:4000/sally/shows/{show_id_rating}/reviews/{review_id_rating}", json=payload)
         if resp.status_code == 200:
-            st.success("Show rating updated successfully!")
+            st.success("Review rating updated successfully!")
         else:
-            st.error(f"Failed to update rating: {resp.text}")
+            st.error(f"Failed to update review rating: {resp.text}")
     except Exception as e:
-        st.error(f"Error updating rating: {e}")
+        st.error(f"Error updating review rating: {e}")
+
 
 # Get User Watchlists
 st.subheader("View User Watchlists")

@@ -17,20 +17,20 @@ sally = Blueprint('sally', __name__)
 
 
 #------------------------------------------------------------
-# Updates a rating for a particular show
-@sally.route('/shows/<int:showId>', methods=['PUT'])
-def update_show_rating(showId):
+# Updates a rating of a review for a particular show
+@sally.route('/shows/<int:showId>/reviews/<int:reviewId>', methods=['PUT'])
+def update_review_rating(showId, reviewId):
     data = request.get_json()
     rating = data.get('rating')
 
     cursor = db.get_db().cursor()
     cursor.execute('''
-        UPDATE shows SET rating = %s 
-        WHERE showID = %s;
-    ''', (rating, showId))
+        UPDATE reviews SET rating = %s 
+        WHERE writtenrevID = %s AND showID = %s;
+    ''', (rating, reviewId, showId))
     db.get_db().commit()
 
-    the_response = make_response(jsonify({"message": "Rating updated successfully"}))
+    the_response = make_response(jsonify({"message": "Review rating updated successfully"}))
     the_response.status_code = 200
     return the_response
 
