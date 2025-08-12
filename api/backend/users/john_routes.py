@@ -187,16 +187,10 @@ def update_comment(reviewId):
         the_response.status_code = 404 
         return the_response
     db.get_db().commit()
-    reponse_data = {'message': 'Comment updated successfully'}
-    the_response = make_reponse(jsonify(response_data))
+    response_data = {'message': 'Comment updated successfully'}
+    the_response = make_response(jsonify(response_data))
     the_response.status_code = 200 
     return the_response 
-
-
-
-
-
-
 
 #------------------------------------------------------------
 # Update a comment for a particular review
