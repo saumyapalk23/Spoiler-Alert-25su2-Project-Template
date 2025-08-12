@@ -11,6 +11,9 @@ def HomeNav():
 def AboutPageNav():
     st.sidebar.page_link("pages/30_About.py", label="About", icon="🧠")
 
+def ShowsPageNav():
+    st.sidebar.page_link("pages/12_showsearch.py", label="Shows", icon="📺")
+
 #### ------------------------ Filmmaker Role ------------------------
 def SallyHome():
     st.sidebar.page_link(
@@ -48,12 +51,12 @@ def ClassificationNav():
     )
 
 
-def NgoDirectoryNav():
-    st.sidebar.page_link("pages/14_NGO_Directory.py", label="NGO Directory", icon="📁")
+# def NgoDirectoryNav():
+#     st.sidebar.page_link("pages/14_NGO_Directory.py", label="NGO Directory", icon="📁")
 
 
-def AddNgoNav():
-    st.sidebar.page_link("pages/15_Add_NGO.py", label="Add New NGO", icon="➕")
+# def AddNgoNav():
+#     st.sidebar.page_link("pages/15_Add_NGO.py", label="Add New NGO", icon="➕")
 
 
 #### ------------------------ System Admin Role ------------------------
@@ -76,7 +79,15 @@ def Reviews():
         "pages/47_alexrankings.py", label="Rankings", icon="⭐"
     )
 
-
+# --------------------------------Analyst Role------------------------------------------------
+def Rankings():
+    st.sidebar.page_link(
+        "pages/46_alexreviews.py", label="Reviews", icon="💌"
+    )
+def Reviews():
+    st.sidebar.page_link(
+        "pages/47_alexrankings.py", label="Rankings", icon="⭐"
+    )
 # --------------------------------Links Function -----------------------------------------------
 def SideBarLinks(show_home=False):
     """
@@ -110,8 +121,8 @@ def SideBarLinks(show_home=False):
             Comments()
             ShowSearch()
             ClassificationNav()
-            NgoDirectoryNav()
-            AddNgoNav()
+            # NgoDirectoryNav()
+            # AddNgoNav()
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state["role"] == "analyst":
@@ -121,9 +132,13 @@ def SideBarLinks(show_home=False):
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state["role"] == "administrator":
             AdminPageNav()
+            Favorites()
 
     # Always show the About page at the bottom of the list of links
     AboutPageNav()
+
+    #Always allow direct to show search as well
+    ShowsPageNav()
 
     if st.session_state["authenticated"]:
         # Always show a logout button if there is a logged in user
