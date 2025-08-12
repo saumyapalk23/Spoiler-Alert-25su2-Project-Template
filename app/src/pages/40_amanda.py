@@ -28,14 +28,35 @@ if st.button("Show Top 3 Most Recent Articles"):
     except Exception as e:
         st.error(f"Failed to load articles: {e}")
 
-if st.button("Show Article Genres"):
+if st.button("Show Article Genres for 3 Most Recent Articles"):
     try:
-        resp = requests.get(f"http://api:4000/admin/articles/genres")
-        genres = resp.json()
-        for g in genres:
-            # Adjust key name depending on backend response
-            genre_name = g.get('genre') or g.get('name') or str(g)
-            st.write(f"- {g['title']}")
+        resp = requests.get("http://api:4000/admin/articles/most-recent/genres")
+        resp.raise_for_status()
+        data = resp.json()
+        genres = data.get('genres', [])
+        
+        if genres:
+            st.write("**Genres of 3 Most Recent Articles:**")
+            current_article = None
+            
+            for g in genres:
+                article_id = g['articleID']
+                article_title = g['title'] 
+                created_at = g['createdAt']
+                genre_title = g['genre_title']
+                
+                # Group by article
+                if current_article != article_id:
+                    if current_article is not None:
+                        st.write("---")
+                    st.write(f"**Article: {article_title}** (ID: {article_id})")
+                    st.write(f"Created: {created_at}")
+                    st.write("Genres:")
+                    current_article = article_id
+                
+                st.write(f"  - {genre_title}")
+        else:
+            st.info("No recent articles with genres found")
     except Exception as e:
         st.error(f"Failed to load genres: {e}")
 
