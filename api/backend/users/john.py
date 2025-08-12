@@ -22,12 +22,13 @@ john = Blueprint('john', __name__)
 def get_shows_by_date():
 
     cursor = db.get_db().cursor()
-    cursor.execute('''SELECT showId, title, releaseDate, genre, description
-FROM shows 
-ORDER BY releaseDate DESC;
+    cursor.execute('''
+    SELECT showId, title, releaseDate, genre, description
+    FROM shows
+    ORDER BY releaseDate DESC; 
     ''')
-    
     theData = cursor.fetchall()
+
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
     return the_response
@@ -37,15 +38,24 @@ ORDER BY releaseDate DESC;
 @john.route('/shows/search', methods=['GET'])
 def search_shows():
     # Get search keyword from query parameters
-    search_keyword = request.args.get('keyword', '')
-    
+    search_keyword = request.args.get('keyword', '').strip()
     cursor = db.get_db().cursor()
-    cursor.execute('''SELECT DISTINCT s.showID, s.title, s.rating, s.releaseDate, s.season, s.ageRating, s.writers, s.viewers
-FROM Shows s 
-LEFT JOIN keyword k ON s.showID = k.showID
-WHERE k.keyword LIKE %s OR s.title LIKE %s
-ORDER BY s.title ASC;
-    ''', (f'%{search_keyword}%', f'%{search_keyword}%'))
+    if search_keyword: 
+        cursor.execute('''
+            SELECT DISTINCT s.showID, s.title, s.rating, s.releaseDate, s.season, s.ageRating, s.writers, s.viewers
+            FROM shows s 
+            LEFT JOIN keywords k ON k.showID = s.showID
+            WHERE k.keyword LIKE %s 
+                OR s.title LIKE %s
+                OR s.description LIKE %s
+            ORDER BY s.title ASC;
+        ''', (f'%{search_keyword}%', f'%{search_keyword}%', f'%{search_keyword}%'))
+    else: 
+        cursor.execute('''
+            SELECT s.showID, s.title, s.rating, s.releaseDate, s.season, s.ageRating, s.writers, s.viewers
+            FROM shows s
+            ORDER BY s.title ASC;
+        ''')
     
     theData = cursor.fetchall()
     the_response = make_response(jsonify(theData))
@@ -57,9 +67,12 @@ ORDER BY s.title ASC;
 @john.route('/articles/genres', methods=['GET'])
 def article_genre():
     cursor = db.get_db().cursor()
-    cursor.execute('''SELECT DISTINCT G.genre FROM articles a 
-    JOIN articles_genres ag ON a.articleID = ag.articleID 
-    JOIN genres g ON ag.genreID = g.genreID
+    cursor.execute('''
+        SELECT DISTINCT g.genre 
+        FROM articles a 
+        JOIN articles_genres ag ON a.articleID = ag.articleID 
+        JOIN genres g ON ag.genreId = g.genreId
+        ORDER BY g.genre ASC;
     ''')
     theData = cursor.fetchall()
     the_response = make_response(jsonify(theData))
@@ -68,21 +81,22 @@ def article_genre():
 
 #------------------------------------------------------------
 # Get shows ordered by genre
-@john.route('/shows/genre/<genreId>', methods=['GET'])
+@john.route('/shows/genre/<int:genreId>', methods=['GET'])
 def get_shows_by_genre(genreId):
     cursor = db.get_db().cursor()
-    cursor.execute('''SELECT DISTINCT s.showID, s.title, s.rating, s.releaseDate, s.season, s.ageRating, s.writers, s.viewers, g.genre, g.description as genre_description
-FROM Shows s 
-JOIN show_genre sg ON s.showID = sg.showID
-JOIN Genre g ON sg.genreID = g.genreID
-WHERE g.genreID = %s
-ORDER BY s.title ASC;
+    cursor.execute('''
+        SELECT DISTINCT s.showID, s.title, s.rating, s.releaseDate, s.season, s.ageRating, s.writers, s.viewers, g.genre, g.description as genre_description
+    FROM shows s 
+    JOIN show_genre sg ON s.showID = sg.showID
+    JOIN genre g ON sg.genreId = g.genreId
+    WHERE g.genreId = %s
+    ORDER BY s.title ASC;
     ''', (genreId,))
     
     theData = cursor.fetchall()
     
     if not theData:
-        response_data = {'message': 'No shows found for this genre', 'genreID': genreId}
+        response_data = {'message': 'No shows found for this genre', 'genreId': genreId}
         the_response = make_response(jsonify(response_data))
         the_response.status_code = 404
         return the_response
@@ -91,20 +105,25 @@ ORDER BY s.title ASC;
     the_response.status_code = 200
     return the_response
 
-
 #------------------------------------------------------------
 # Retrieves all shows based on certain streaming platform
-@john.route('/shows/streaming_platform/<platformId>', methods=['GET'])
+@john.route('/shows/streaming_platform/<int:platformId>', methods=['GET'])
 def get_shows_by_platform(platformId):
     cursor = db.get_db().cursor()
     cursor.execute('''SELECT s.showID, s.title, s.rating, s.releaseDate, s.season, s.ageRating, s.writers, s.viewers, sp.streaming_platform
-FROM Shows s 
+FROM shows s 
 JOIN streaming_pltfm sp ON s.showID = sp.showID
-WHERE sp.streaming_platform = %s
+WHERE sp.platformID = %s
 ORDER BY s.title ASC;
     ''', (platformId,))
-    
     theData = cursor.fetchall()
+
+    if not theData: 
+        response_data = {'message': 'No shows found for this streaming platform', 'platformId': platformId}
+        the_response = make_response(jsonify(response_data))
+        the_response.status_code = 404
+        return the_response
+    
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
     return the_response

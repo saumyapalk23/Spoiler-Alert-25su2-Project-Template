@@ -96,14 +96,13 @@ CREATE TABLE IF NOT EXISTS watchlist(
 );
 
 DROP TABLE IF EXISTS userFeedback;
-CREATE TABLE IF NOT EXISTS userFeedback(
-    feedbackId INT NOT NULL PRIMARY KEY,
-    title VARCHAR(50),
-    content text NOT NULL,
-    createdAt DATETIME DEFAULT NOW() NOT NULL,
-    userId INT NOT NULL,
-    CONSTRAINT feedback_writtenBy FOREIGN KEY (userId) REFERENCES users (userId)
-	ON DELETE RESTRICT
+CREATE TABLE IF NOT EXISTS userFeedback (
+    feedbackId INTEGER AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(200) NOT NULL,
+    content TEXT NOT NULL,
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    userId INT,
+    CONSTRAINT feedback_writtenBy FOREIGN KEY (userId) REFERENCES users(userId) ON DELETE RESTRICT
 );
 
 DROP TABLE IF EXISTS watches;
@@ -141,7 +140,6 @@ CREATE TABLE IF NOT EXISTS articles(
    rating DECIMAL(3, 1) CHECK (rating BETWEEN 0.0 AND 5.0),
    content TEXT,
    directorID INT NOT NULL,
-   showrunnerID INT,
    CONSTRAINT fk_articleDirector FOREIGN KEY (directorID) REFERENCES directors (directorID)
 	ON UPDATE CASCADE
 	ON DELETE RESTRICT
@@ -339,26 +337,47 @@ VALUES (1, 4.5),
       (14, 4.0);
 
 
-INSERT INTO shows (showID, title, rating, releaseDate, season, ageRating, streamingPlatform)
-VALUES
-  (10, 'Ted Lasso', 4.5, '2020-08-14', 3, 'TV-14', 'Apple TV+'),
-  (11, 'Stranger Things', 4.8, '2016-07-15', 4, 'TV-14', 'Netflix'),
-  (14, 'The Witcher', 4.3, '2019-12-20', 2, 'TV-MA', 'Netflix'),
-  (15, 'Breaking Bad', 4.9, '2008-01-20', 5, 'TV-MA', 'AMC'),
-  (16, 'Friends', 4.7, '1994-09-22', 10, 'TV-14', 'Netflix'),
-  (17, 'The Crown', 4.6, '2016-11-04', 5, 'TV-MA', 'Netflix'),
-  (18, 'Black Mirror', 4.5, '2011-12-04', 5, 'TV-MA', 'Netflix'),
-  (19, 'Westworld', 4.4, '2016-10-02', 3, 'TV-MA', 'HBO'),
-  (20, 'The Mandalorian', 4.7, '2019-11-12', 3, 'TV-14', 'Disney+'),
-  (21, 'Ozark', 4.3, '2017-07-21', 4, 'TV-MA', 'Netflix'),
-  (22, 'House of Cards', 4.4, '2013-02-01', 6, 'TV-MA', 'Netflix'),
-  (23, 'Sherlock', 4.6, '2010-07-25', 4, 'TV-14', 'BBC'),
-  (24, 'The Boys', 4.6, '2019-07-26', 3, 'TV-MA', 'Amazon Prime'),
-  (25, 'Better Call Saul', 4.8, '2015-02-08', 6, 'TV-MA', 'AMC'),
-  (26, 'Narcos', 4.5, '2015-08-28', 3, 'TV-MA', 'Netflix'),
-  (27, 'Mindhunter', 4.5, '2017-10-13', 2, 'TV-MA', 'Netflix'),
-  (28, 'Fargo', 4.7, '2014-04-15', 4, 'TV-MA', 'FX'),
-  (29, 'Dark', 4.6, '2017-12-01', 3, 'TV-MA', 'Netflix');
+INSERT INTO shows (showID, title, rating, releaseDate, season, ageRating, streamingPlatform) VALUES
+    (1, 'Breaking Bad', 2.0, '1981-01-27', 8, 'R', 'Yakitri'),
+    (2, 'Game of Thrones', 0.8, '2012-10-09', 17, 'PG-13', 'Kazio'),
+    (3, 'Friends', 3.4, '1942-08-12', 13, 'NC-17', 'Babbleset'),
+    (4, 'The Office', 2.1, '1942-09-14', 18, 'PG', 'Mycat'),
+    (5, 'Stranger Things', 0.1, '1943-12-03', 11, 'PG', 'Shuffletag'),
+    (6, 'The Crown', 2.4, '1920-05-06', 2, 'NC-17', 'Thoughtstorm'),
+    (7, 'The Simpsons', 0.3, '1959-11-25', 1, 'PG', 'Mynte'),
+    (8, 'The Mandalorian', 2.6, '1961-02-16', 4, 'PG-13', 'Demizz'),
+    (9, 'Better Call Saul', 4.9, '1948-04-06', 20, 'NC-17', 'Dynabox'),
+    (10, 'Seinfeld', 2.7, '1945-12-01', 16, 'G', 'Thoughtbridge'),
+    (11, 'The Sopranos', 3.3, '1981-10-26', 12, 'PG-13', 'Browsecat'),
+    (12, 'The Witcher', 2.5, '1968-12-05', 15, 'NC-17', 'Wordtune'),
+    (13, 'Lost', 1.9, '1995-07-13', 6, 'R', 'Quaxo'),
+    (14, 'House of Cards', 1.1, '1921-01-27', 15, 'PG-13', 'Skilith'),
+    (15, 'The Boys', 0.2, '1993-08-11', 18, 'PG-13', 'Yodel'),
+    (16, 'Mad Men', 0.5, '1902-06-03', 18, 'R', 'Ainyx'),
+    (17, 'Parks and Recreation', 1.3, '1970-03-08', 20, 'G', 'Fatz'),
+    (18, 'Sherlock', 4.6, '1951-11-06', 1, 'G', 'Zoombeat'),
+    (19, 'House', 1.3, '1937-07-30', 9, 'G', 'Mynte'),
+    (20, 'True Detective', 2.6, '1987-06-12', 8, 'G', 'Rhybox'),
+    (21, 'Narcos', 1.4, '1953-03-21', 13, 'R', 'Plambee'),
+    (22, 'Westworld', 2.0, '2004-04-12', 13, 'PG', 'Miboo'),
+    (23, 'The Walking Dead', 1.7, '1953-02-06', 3, 'R', 'Oba'),
+    (24, 'The Big Bang Theory', 0.9, '2018-03-14', 7, 'G', 'Roomm'),
+    (25, 'Vikings', 0.8, '1941-06-20', 9, 'R', 'Meevee'),
+    (26, 'Peaky Blinders', 0.1, '1998-06-14', 12, 'PG', 'Edgeclub'),
+    (27, 'Succession', 1.3, '1943-12-11', 20, 'R', 'Mydo'),
+    (28, 'Dexter', 3.2, '1906-06-17', 18, 'R', 'Agivu'),
+    (29, 'Community', 0.5, '1980-06-13', 2, 'G', 'Thoughtsphere'),
+    (30, 'The X-Files', 3.3, '1991-06-05', 7, 'PG-13', 'Jabbertype'),
+    (31, 'Black Mirror', 1.3, '1923-05-19', 20, 'PG', 'Ozu'),
+    (32, 'Fargo', 3.8, '2022-07-13', 10, 'R', 'Roomm'),
+    (33, 'Brooklyn Nine-Nine', 2.5, '1947-05-27', 19, 'PG-13', 'Centimia'),
+    (34, 'Ozark', 0.2, '1999-02-09', 20, 'R', 'Zazio'),
+    (35, 'The Handmaid''s Tale', 4.3, '1995-03-16', 19, 'NC-17', 'Skimia'),
+    (36, 'Arrested Development', 4.3, '1934-12-14', 6, 'PG-13', 'Yodo'),
+    (37, 'Boardwalk Empire', 4.9, '1929-09-04', 8, 'PG', 'Photofeed'),
+    (38, 'Mindhunter', 3.9, '1929-12-19', 4, 'NC-17', 'Fadeo'),
+    (39, 'Chernobyl', 1.9, '1930-11-03', 11, 'NC-17', 'Twinder'),
+    (40, 'The Americans', 4.5, '1963-07-17', 15, 'PG-13', 'Twimm');
 
 INSERT INTO reviews (writtenrevID, userId, showID, createdAt, rating, content)
 VALUES
@@ -396,11 +415,51 @@ INSERT INTO forum (forumId, topic, content, name)
 VALUES (600, 'Best Sci-Fi Shows', 'Let''s discuss your favorites!', 'Alex T'),
       (601, 'Teen Drama Highlights', 'Euphoria deep dive.', 'Sophie M');
 
-INSERT INTO genre (genreId, title, description)
-VALUES (700, 'Sci-Fi', 'Futuristic, space-related content.'),
-      (701, 'Drama', 'Character-driven narratives.');
+INSERT INTO genre (genreId, title) 
+VALUES
+    (1, 'Comedy|Drama'),
+    (2, 'Action|Thriller'),
+    (3, 'Drama|Thriller'),
+    (4, 'Documentary'),
+    (5, 'Comedy'),
+    (6, 'Comedy|Drama|Romance'),
+    (7, 'Drama|Romance'),
+    (8, 'Horror'),
+    (9, 'Adventure|Animation|Children|Comedy|Fantasy|Romance'),
+    (10, 'Comedy|Horror'),
+    (11, 'Drama|Mystery'),
+    (12, 'Crime|Drama|Thriller'),
+    (13, 'Drama|Mystery'),
+    (14, 'Action|Drama|War'),
+    (15, 'Comedy'),
+    (16, 'Children|Comedy'),
+    (17, 'Horror'),
+    (18, 'Comedy|Drama'),
+    (19, 'Comedy|Horror'),
+    (20, 'Drama'),
+    (21, 'Drama|Western'),
+    (22, 'Comedy|Romance'),
+    (23, 'Action|Drama'),
+    (24, 'Sci-Fi|Thriller'),
+    (25, 'Documentary'),
+    (26, 'Comedy'),
+    (27, 'Comedy'),
+    (28, 'Drama|Thriller'),
+    (29, 'Adventure|Animation|Horror|Sci-Fi|Thriller'),
+    (30, 'Documentary'),
+    (31, 'Action|Adventure|Drama|War'),
+    (32, 'Documentary'),
+    (33, 'Drama'),
+    (34, 'Comedy|Fantasy'),
+    (35, 'Comedy'),
+    (36, 'Action|Horror'),
+    (37, 'Documentary'),
+    (38, 'Comedy|Drama'),
+    (39, 'Crime|Drama|Romance'),
+    (40, 'Adventure|Fantasy');
 
-INSERT INTO articles (articleID, title, createdAt, rating, content, directorID, showrunnerID)
+
+INSERT INTO articles (articleID, title, createdAt, rating, content, directorID)
 VALUES (800, 'Why Euphoria Matters', '2022-02-01', 4.6, 'An in-depth look at its social impact.', 101, NULL),
       (801, 'The Future of Sci-Fi', '2023-01-12', 4.2, 'Exploring modern sci-fi.', 100, NULL);
 
