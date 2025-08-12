@@ -17,21 +17,21 @@ sally = Blueprint('sally', __name__)
 
 
 #------------------------------------------------------------
-# Add a rating for a particular show
-@sally.route('/shows/<int:showId>', methods=['POST'])
-def add_show_rating(showId):
+# Updates a rating for a particular show
+@sally.route('/shows/<int:showId>', methods=['PUT'])
+def update_show_rating(showId):
     data = request.get_json()
     rating = data.get('rating')
 
     cursor = db.get_db().cursor()
     cursor.execute('''
-        INSERT INTO ratings (showId, rating)
-        VALUES (%s, %s);
-    ''', (showId, rating))
+        UPDATE shows SET rating = %s 
+        WHERE showID = %s;
+    ''', (rating, showId))
     db.get_db().commit()
 
-    the_response = make_response(jsonify({"message": "Rating added successfully"}))
-    the_response.status_code = 201
+    the_response = make_response(jsonify({"message": "Rating updated successfully"}))
+    the_response.status_code = 200
     return the_response
 
 #------------------------------------------------------------
@@ -68,28 +68,6 @@ def create_watchlist(userId):
     the_response.status_code = 201
     return the_response
 
-#------------------------------------------------------------
-# Delete an existing watchlist for a user
-
-
-# @sally.route('/users/<int:userId>/watchlists/<int:watchlistId>', methods=['DELETE'])
-# def delete_watchlist(userId, watchlistId):
-#    cursor = db.get_db().cursor()
-#   cursor.execute('''
-#        DELETE FROM watchlists
-#        WHERE watchlistId = %s AND userId = %s;
-#    ''', (watchlistId, userId))
-#    db.get_db().commit()
-
-#    if cursor.rowcount == 0:
-#       the_response = make_response(jsonify({"error": "Watchlist not found"}))
-#        the_response.status_code = 404
-#        return the_response
-
-#    the_response = make_response(jsonify({"message": "Watchlist deleted successfully"}))
-#    the_response.status_code = 200
-#    return the_response
-#
 
 #------------------------------------------------------------
 # Adds new shows in a watchlist
@@ -238,79 +216,45 @@ def delete_from_watchlist(userId, showId):
 
 
 #------------------------------------------------------------
-# Gets specific show reviews based on specific age group
+# Gets shows favorited by users in a specific age group
 
-@sally.route('/shows/<int:showId>/reviews', methods=['GET'])
-def get_age_specific_reviews(showId):
+@sally.route('/shows/favorites/users', methods=['GET'])
+def get_favorite_shows_by_users():
+
+    age = request.args.get('age')
     
     cursor = db.get_db().cursor()
     
-    try:
-        # Check that the show exists
+    if age:
+ 
         cursor.execute('''
-            SELECT showID, title
-            FROM shows 
-            WHERE showID = %s
-        ''', (showId,))
-        
-        show = cursor.fetchone()
-        
-        if not show:
-            response_data = {'error': 'Show not found'}
-            the_response = make_response(jsonify(response_data))
-            the_response.status_code = 404
-            return the_response
-        
-        show_id, show_title = show
-        
-        # Get all reviews for this show
+            SELECT s.showID, s.title, s.rating, s.releaseDate, 
+                   s.season, s.ageRating, s.streamingPlatform,
+                   COUNT(f.favoriteId) as favorite_count
+            FROM shows s
+            JOIN favorites f ON s.showID = f.showId
+            JOIN users u ON f.userId = u.userId
+            WHERE u.age = %s
+            GROUP BY s.showID, s.title, s.rating, s.releaseDate, s.season, s.ageRating, s.streamingPlatform
+            ORDER BY favorite_count DESC, s.rating DESC;
+        ''', (age,))
+    else:
+
         cursor.execute('''
-            SELECT r.writtenrevID, r.userId, r.createdAt, r.rating, r.content,
-                   u.userName, u.name
-            FROM reviews r
-            JOIN users u ON r.userId = u.userId
-            WHERE r.showID = %s
-            ORDER BY r.createdAt DESC
-        ''', (showId,))
-        
-        reviews_data = cursor.fetchall()
-        
-        if not reviews_data:
-            response_data = {
-                'message': f'No reviews found for "{show_title}"',
-                'showId': showId,
-                'reviews': []
-            }
-        else:
-            # Format the results
-            reviews = []
-            for review in reviews_data:
-                review_data = {
-                    'reviewId': review[0],
-                    'userId': review[1],
-                    'createdAt': review[2].isoformat() if review[2] else None,
-                    'rating': float(review[3]) if review[3] else None,
-                    'content': review[4],
-                    'userName': review[5],
-                    'name': review[6]
-                }
-                reviews.append(review_data)
-            
-            response_data = {
-                'message': f'Reviews for "{show_title}"',
-                'showId': showId,
-                'count': len(reviews),
-                'reviews': reviews
-            }
-        
-        the_response = make_response(jsonify(response_data))
-        the_response.status_code = 200
-        
-    except Exception as e:
-        response_data = {'error': f'Failed to get reviews: {str(e)}'}
-        the_response = make_response(jsonify(response_data))
-        the_response.status_code = 500
+            SELECT s.showID, s.title, s.rating, s.releaseDate, 
+                   s.season, s.ageRating, s.streamingPlatform,
+                   COUNT(f.favoriteId) as favorite_count
+            FROM shows s
+            JOIN favorites f ON s.showID = f.showId
+            JOIN users u ON f.userId = u.userId
+            GROUP BY s.showID, s.title, s.rating, s.releaseDate, s.season, s.ageRating, s.streamingPlatform
+            ORDER BY favorite_count DESC, s.rating DESC;
+        ''')
     
+    favorites = cursor.fetchall()
+    
+    the_response = make_response(jsonify({"favorites": favorites}))
+    the_response.status_code = 200
     return the_response
 
 
