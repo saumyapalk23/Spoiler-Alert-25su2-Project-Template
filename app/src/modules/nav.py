@@ -11,19 +11,24 @@ def HomeNav():
 def AboutPageNav():
     st.sidebar.page_link("pages/30_About.py", label="About", icon="🧠")
 
-#### ------------------------ Examples for Role of pol_strat_advisor ------------------------
-def PolStratAdvHomeNav():
+#### ------------------------ Filmmaker Role ------------------------
+def SallyHome():
     st.sidebar.page_link(
-        "pages/00_Pol_Strat_Home.py", label="Political Strategist Home", icon="👤"
+        "pages/33_sally.py", label="Sally's Homepage", icon="👤"
     )
 
-def WorldBankVizNav():
+def ReviewsAndRatings():
     st.sidebar.page_link(
-        "pages/01_World_Bank_Viz.py", label="World Bank Visualization", icon="🏦"
+        "pages/00_sally_ratings.py", label="Reviews and Ratings", icon="👤"
     )
 
-def MapDemoNav():
-    st.sidebar.page_link("pages/02_Map_Demo.py", label="Map Demonstration", icon="🗺️")
+def Watchlists():
+    st.sidebar.page_link(
+        "pages/01_sally_watchlists.py", label="Watchlists", icon="🏦"
+    )
+
+def Follows():
+    st.sidebar.page_link("pages/02_sally_follows.py", label="Follows", icon="🗺️")
 
 
 ## ------------------------ Examples for Role of usaid_worker ------------------------
@@ -95,10 +100,10 @@ def SideBarLinks(show_home=False):
 
         # Show World Bank Link and Map Demo Link if the user is a political strategy advisor role.
         if st.session_state["role"] == "filmmaker":
-            PolStratAdvHomeNav()
-            WorldBankVizNav()
-            MapDemoNav()
-            Favorites()
+            SallyHome()
+            ReviewsAndRatings()
+            Watchlists()
+            Follows()
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state["role"] == "viewer":
