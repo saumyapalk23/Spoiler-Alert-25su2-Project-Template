@@ -112,12 +112,22 @@ LIMIT 3;
 #------------------------------------------------------------
 # users submit/create feedback
 @amanda.route('/users/<userId>/feedback/', methods=['POST'])
-def get_fb():
+def get_fb(userId):
+    the_data = request.json
+    current_app.logger.info(the_data)
+    title = the_data['title']
+    content = the_data['content']
+    userId = the_data['userId']
+    query = f'''
+        INSERT INTO userFeedback (title, content, userId)
+        VALUES (%s, %s, %s)'''
+    current_app.logger.info(query)
+
+    # executing and committing the insert statement 
     cursor = db.get_db().cursor()
-    cursor.execute('''INSERT INTO userFeedback(feedbackId, title, content, createdAt)
-VALUES ({feedbackId}, {title}, {content}, {createdAt});
-    ''')
-    theData = cursor.fetchall()
-    the_response = make_response(jsonify(theData))
-    the_response.status_code = 200
-    return the_response
+    cursor.execute(query, (title, content, userId))
+    db.get_db().commit()
+    
+    response = make_response("Successfully added product")
+    response.status_code = 200
+    return 'feedback submitted!'

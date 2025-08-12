@@ -3,7 +3,7 @@ import requests
 from streamlit_extras.app_logo import add_logo
 from modules.nav import SideBarLinks
 
-# Initialize sidebar
+# Call the SideBarLinks from the nav module in the modules directory
 SideBarLinks()
 
 st.title("Sally API DEMO")

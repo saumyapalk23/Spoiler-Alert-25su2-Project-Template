@@ -73,7 +73,7 @@ if st.button('Act as Alex, data analyst',
     st.session_state['authenticated'] = True
     st.session_state['role'] = 'analyst'
     st.session_state['first_name'] = 'Alex'
-    st.switch_page('pages/32_alex.py')
+    st.switch_page('pages/45_alex.py')
 
 if st.button('Act as Amanda, system administrator', 
             type = 'primary', 

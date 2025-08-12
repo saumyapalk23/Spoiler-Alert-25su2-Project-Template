@@ -18,11 +18,20 @@ alex = Blueprint('alex', __name__)
 @alex.route('/shows', methods=['GET'])
 def get_szn():
     cursor = db.get_db().cursor()
-    cursor.execute('''SELECT *
-FROM shows
-WHERE season <= 3
-ORDER BY season ASC
-LIMIT 5;
+    cursor.execute('''SELECT
+    showId,
+    title,
+    seasons,     
+    rating,
+    releaseDate,
+    ageRating,
+    streamingPlatform
+FROM
+    shows
+WHERE
+    seasons <= :max_seasons
+ORDER BY
+    title;
     ''')
     theData = cursor.fetchall()
     the_response = make_response(jsonify(theData))

@@ -62,6 +62,16 @@ def Favorites():
         "pages/40_amanda.py", label="Favs", icon="❤️"
     )
 
+def Rankings():
+    st.sidebar.page_link(
+        "pages/46_alexreviews.py", label="Reviews", icon="💌"
+    )
+def Reviews():
+    st.sidebar.page_link(
+        "pages/47_alexrankings.py", label="Rankings", icon="⭐"
+    )
+
+
 # --------------------------------Links Function -----------------------------------------------
 def SideBarLinks(show_home=False):
     """
@@ -100,11 +110,8 @@ def SideBarLinks(show_home=False):
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state["role"] == "analyst":
-            PredictionNav()
-            ApiTestNav()
-            ClassificationNav()
-            NgoDirectoryNav()
-            AddNgoNav()
+            Rankings()
+            Reviews()
 
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state["role"] == "administrator":
