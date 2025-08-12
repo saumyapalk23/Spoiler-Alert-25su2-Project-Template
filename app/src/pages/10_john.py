@@ -64,7 +64,7 @@ def main():
 if st.button('View the Simple API Demo', 
              type='primary',
              use_container_width=True):
-  st.switch_page('pages/12_API_Test.py')
+  st.switch_page('pages/12_ShowSearch.py')
 
 if st.button("View Classification Demo",
              type='primary',

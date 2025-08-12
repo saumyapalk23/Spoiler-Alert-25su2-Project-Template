@@ -27,8 +27,8 @@ def MapDemoNav():
 
 
 ## ------------------------ Examples for Role of usaid_worker ------------------------
-def ApiTestNav():
-    st.sidebar.page_link("pages/12_API_Test.py", label="Test the API", icon="🛜")
+def ShowSearch():
+    st.sidebar.page_link("pages/12_ShowSearch.py", label="Search for shows", icon="🔎")
 
 
 def Comments():
@@ -103,7 +103,7 @@ def SideBarLinks(show_home=False):
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state["role"] == "viewer":
             Comments()
-            ApiTestNav()
+            ShowSearch()
             ClassificationNav()
             NgoDirectoryNav()
             AddNgoNav()
