@@ -90,3 +90,34 @@ if st.button("Remove Show from Watchlist"):
         st.error(f"Error removing show: {e}")
 
 
+
+# ------------------------
+# Display all Watchlists
+# ------------------------
+
+st.subheader("View All Watchlists")
+try:
+    resp = requests.get("http://api:4000/sally/watchlists")
+    
+    if resp.status_code == 200:
+        watchlists_data = resp.json()
+        
+        if watchlists_data:
+            st.success(f"Found {len(watchlists_data)} watchlist entries:")
+            
+            # Display watchlists in an organized way
+            for i, watchlist in enumerate(watchlists_data, 1):
+                with st.expander(f"{i}. {watchlist.get('name', 'Unnamed')} (User: {watchlist.get('userId', 'Unknown')})"):
+                    st.write(f"**To Watch ID:** {watchlist.get('toWatchId', 'N/A')}")
+                    st.write(f"**Name:** {watchlist.get('name', 'N/A')}")
+                    st.write(f"**User ID:** {watchlist.get('userId', 'N/A')}")
+                    st.write(f"**Show ID:** {watchlist.get('showId', 'N/A')}")
+                    st.write(f"**Created At:** {watchlist.get('createdAt', 'N/A')}")
+        else:
+            st.info("No watchlists found.")
+    else:
+        st.error(f"Failed to load watchlists: {resp.text}")
+except Exception as e:
+    st.error(f"Error loading watchlists: {e}")
+
+

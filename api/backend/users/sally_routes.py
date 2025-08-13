@@ -504,6 +504,36 @@ def get_all_reviews():
     
     return jsonify(reviews_list)
 
+#------------------------------------------------------------
+# Get all watchlists
+@sally.route('/watchlists', methods=['GET'])
+def get_all_watchlists():
+    current_app.logger.info("Fetching all watchlists")
+    
+    query = '''
+        SELECT toWatchId, userId, createdAt, name, showId
+        FROM watchlist
+        ORDER BY createdAt DESC;'''
+    current_app.logger.info(query)
+    
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    watchlists = cursor.fetchall()
+    
+    # Convert to list of dictionaries
+    watchlists_list = []
+    for watchlist in watchlists:
+        watchlists_list.append({
+            'toWatchId': watchlist['toWatchId'],
+            'userId': watchlist['userId'],
+            'createdAt': watchlist['createdAt'],
+            'name': watchlist['name'],
+            'showId': watchlist['showId']
+        })
+    
+    return jsonify(watchlists_list)
+
+
 # #------------------------------------------------------------
 # # Update customer info for customer with particular userID
 # #   Notice the manner of constructing the query.
