@@ -98,24 +98,21 @@ def article_genre():
 @john.route('/shows/genre/<int:genreId>', methods=['GET'])
 def get_shows_by_genre(genreId):
     cursor = db.get_db().cursor()
-    cursor.execute('''
-        SELECT DISTINCT s.showID, s.title, s.rating, s.releaseDate, s.season, s.ageRating, s.writers, s.viewers, g.genre, g.description as genre_description
-    FROM shows s 
-    JOIN show_genre sg ON s.showID = sg.showID
-    JOIN genre g ON sg.genreId = g.genreId
-    WHERE g.genreId = %s
-    ORDER BY s.title ASC;
-    ''', (genreId,))
-    
-    theData = cursor.fetchall()
-    
-    if not theData:
-        response_data = {'message': 'No shows found for this genre', 'genreId': genreId}
-        the_response = make_response(jsonify(response_data))
-        the_response.status_code = 404
-        return the_response
-    
-    the_response = make_response(jsonify(theData))
+    cursor.execute(
+        """
+        SELECT DISTINCT
+            s.showID, s.title, s.rating, s.releaseDate, s.season, s.ageRating,
+            g.title AS genreTitle
+        FROM shows s
+        JOIN show_genre sg ON sg.showId = s.showID
+        JOIN genre g ON g.genreId = sg.genreId
+        WHERE g.genreId = %s
+        ORDER BY s.title ASC;
+        """,
+        (genreId,)
+    )
+    rows = cursor.fetchall()
+    the_response = make_response(jsonify(rows))
     the_response.status_code = 200
     return the_response
 
