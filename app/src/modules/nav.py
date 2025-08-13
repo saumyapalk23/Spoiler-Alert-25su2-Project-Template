@@ -51,24 +51,21 @@ def StreamingPlatform():
     st.sidebar.page_link("pages/16_StreamingPlatforms.py", label="Streaming Platforms", icon="🎥")
 
 #### ------------------------ System Admin Role ------------------------
-def AdminPageNav():
-    st.sidebar.page_link("pages/20_Admin_Home.py", label="System Admin", icon="🖥️")
-    st.sidebar.page_link(
-        "pages/21_ML_Model_Mgmt.py", label="ML Model Management", icon="🏢"
-    )
 def Favorites():
     st.sidebar.page_link(
         "pages/40_amanda.py", label="Favs", icon="❤️"
     )
 
-def Rankings():
+def RecentArticles():
     st.sidebar.page_link(
-        "pages/46_alexreviews.py", label="Reviews", icon="💌"
+        "pages/41_amandaarticles.py", label="Recents", icon="🗒️"
     )
-def Reviews():
+
+def Feedback():
     st.sidebar.page_link(
-        "pages/47_alexrankings.py", label="Rankings", icon="⭐"
+        "pages/42_amandafeedback.py", label="Feedback", icon="💬"
     )
+
 
 # --------------------------------Analyst Role------------------------------------------------
 def Rankings():
@@ -78,6 +75,10 @@ def Rankings():
 def Reviews():
     st.sidebar.page_link(
         "pages/47_alexrankings.py", label="Rankings", icon="⭐"
+    )
+def AlexHome():
+    st.sidebar.page_link(
+        "pages/45_alex.py", label="Alex's Main Page", icon="🧭"
     )
 # --------------------------------Links Function -----------------------------------------------
 def SideBarLinks(show_home=False):
@@ -117,13 +118,15 @@ def SideBarLinks(show_home=False):
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state["role"] == "analyst":
+            AlexHome()
             Rankings()
             Reviews()
 
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state["role"] == "administrator":
-            AdminPageNav()
             Favorites()
+            RecentArticles()
+            Feedback()
 
     # Always show the About page at the bottom of the list of links
     AboutPageNav()

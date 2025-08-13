@@ -108,9 +108,10 @@ VALUES ({userId}, {favoriteID}, {showId}, {actorId});
 @amanda.route('/reviews/most-popular', methods=['GET'])
 def get_pop():
     cursor = db.get_db().cursor()
-    cursor.execute('''SELECT reviewId, title, COUNT(comments) as num_comments
-FROM reviews JOIN comments ON reviews.writtenrevID = comments.commentId
-GROUP BY reviewId 
+    cursor.execute('''SELECT s.title, r.writtenrevId, r.content, COUNT(c.commentId) as num_comments
+FROM reviews r JOIN comments c ON r.writtenrevId = c.writtenrevId
+JOIN shows s ON r.showId = s.showId
+GROUP BY r.writtenrevId
 ORDER BY num_comments DESC
 LIMIT 3;  
     ''')
@@ -121,7 +122,7 @@ LIMIT 3;
 #------------------------------------------------------------
 # users submit/create feedback
 @amanda.route('/users/<userId>/feedback/', methods=['POST'])
-def get_fb(userId):
+def give_fb(userId):
     the_data = request.json
     current_app.logger.info(the_data)
     title = the_data['title']
@@ -140,3 +141,16 @@ def get_fb(userId):
     response = make_response("Successfully added feedback!")
     response.status_code = 200
     return 'feedback submitted!'
+
+    # users submit/create feedback
+@amanda.route('/users/feedback/', methods=['GET'])
+def get_fb():
+    cursor = db.get_db().cursor()
+    cursor.execute('''SELECT userId, content, createdAt
+    FROM userFeedback
+    ORDER BY createdAt
+    ''')
+    theData = cursor.fetchall()
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
+    return the_response
