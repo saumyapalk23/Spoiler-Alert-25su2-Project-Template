@@ -20,6 +20,8 @@ CREATE TABLE IF NOT EXISTS shows(
     season INT NOT NULL,
     ageRating VARCHAR(10),
     streamingPlatform VARCHAR(25)
+    directorId INT NOT NULL
+    FOREIGN KEY (directorId) REFERENCES directors (directorId)
 );
 
 DROP TABLE IF EXISTS favorites;
@@ -39,7 +41,7 @@ CREATE TABLE IF NOT EXISTS directors(
 	filmsMade INT,
 	bio TEXT,
 	socialMedia VARCHAR(100),
-    showId INT NOT NULL,
+    -- showId INT NOT NULL,
     FOREIGN KEY d_show (showId) REFERENCES shows(showId)
         ON UPDATE CASCADE
         ON DELETE CASCADE     );
