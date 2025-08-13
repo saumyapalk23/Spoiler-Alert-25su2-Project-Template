@@ -260,3 +260,69 @@ def delete_comment(writtenrevId, commentId):
     return the_response
 
 #Comments display route 
+@john.route('/users/<int:user_id>/comments/activity', methods=['GET'])
+def user_comment_activity(user_id):
+    cursor = db.get_db().cursor()
+    cursor.execute("""
+        SELECT COUNT(*) AS has_col
+        FROM INFORMATION_SCHEMA.COLUMNS
+        WHERE TABLE_SCHEMA = DATABASE()
+          AND TABLE_NAME = 'comments'
+          AND COLUMN_NAME = 'updatedAt'
+    """)
+    row = cursor.fetchone()
+    has_updated = (row['has_col'] if isinstance(row, dict) else row[0]) > 0
+
+    if has_updated:
+        sql = """
+            SELECT * FROM (
+                SELECT
+                    c.commentId      AS commentId,
+                    c.writtenrevId   AS reviewId,
+                    c.userId         AS userId,
+                    c.content        AS content,
+                    c.createdAt      AS activityAt,
+                    'created'        AS action
+                FROM comments c
+                WHERE c.userId = %s
+
+                UNION ALL
+
+                SELECT
+                    c.commentId      AS commentId,
+                    c.writtenrevId   AS reviewId,
+                    c.userId         AS userId,
+                    c.content        AS content,
+                    c.updatedAt      AS activityAt,
+                    'updated'        AS action
+                FROM comments c
+                WHERE c.userId = %s
+                  AND c.updatedAt IS NOT NULL
+                  AND c.updatedAt > c.createdAt
+            ) x
+            ORDER BY x.activityAt DESC;
+        """
+        cursor.execute(sql, (user_id, user_id))
+    else:
+        sql = """
+            SELECT
+                c.commentId      AS commentId,
+                c.writtenrevId   AS reviewId,
+                c.userId         AS userId,
+                c.content        AS content,
+                c.createdAt      AS activityAt,
+                'created'        AS action
+            FROM comments c
+            WHERE c.userId = %s
+            ORDER BY c.createdAt DESC;
+        """
+        cursor.execute(sql, (user_id,))
+
+    rows = cursor.fetchall()
+    if rows and not isinstance(rows[0], dict):
+        cols = [d[0] for d in cursor.description]
+        rows = [dict(zip(cols, r)) for r in rows]
+
+    resp = make_response(jsonify(rows))
+    resp.status_code = 200
+    return resp

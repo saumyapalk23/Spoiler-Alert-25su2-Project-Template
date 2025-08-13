@@ -80,9 +80,9 @@ st.subheader("Delete Comment")
 col1, col2 = st.columns(2)
 with col1:
     review_id_delete_comment = st.number_input("Review ID", min_value=1, key="review_id_delete_comment")
-    user_id_delete_comment   = st.number_input("User ID",   min_value=1, key="user_delete_comment")
+    user_id_delete_comment = st.number_input("User ID",   min_value=1, key="user_delete_comment")
 with col2:
-    comment_id_delete        = st.number_input("Comment ID", min_value=1, key="comment_id_delete")
+    comment_id_delete = st.number_input("Comment ID", min_value=1, key="comment_id_delete")
 
 if st.button("Delete Comment"):
     try:
@@ -103,3 +103,32 @@ if st.button("Delete Comment"):
             st.error(f"Failed to delete comment: {response.text}")
     except Exception as e:
         st.error(f"Error deleting comment: {e}")
+
+# display comment activity 
+st.subheader("Comment Activity")
+
+user_id = st.session_state.get("user_id")
+user_id = user_id or st.number_input("User ID", min_value=1, value=1, step=1)
+
+try:
+    url = f"http://api:4000/john/users/{int(user_id)}/comments/activity"
+    r = requests.get(url)
+
+    if r.status_code != 200:
+        st.error(f"API error {r.status_code}")
+    else:
+        events = r.json() or []
+        if not events:
+            st.info("No comment activity yet.")
+        else:
+            for ev in events:
+                action = (ev.get("action") or "").lower()
+                if action not in ("created", "updated"):
+                    continue
+                header = f"{action.upper()} comment #{ev.get('commentId','?')} review #{ev.get('reviewId','?')}"
+                with st.expander(header):
+                    st.write(f"By user {ev.get('userId','?')} at {ev.get('activityAt','?')}")
+                    st.write("Content:")
+                    st.code(ev.get("content",""))
+except Exception as e:
+    st.error(f"Failed to load: {e}")
