@@ -79,27 +79,43 @@ def get_recent_articles_genres():
 
 #------------------------------------------------------------
 # adds a show/actor to favorites
-@amanda.route('/users/<userId>/favorites/', methods=['POST'])
-def user_favorite():
+@amanda.route('/users/<user_id>/favorites/', methods=['POST'])
+def user_favorite(user_id):
     cursor = db.get_db().cursor()
-    cursor.execute('''INSERT INTO favorites (userID, favoriteID)
-VALUES ({userId}, {favoriteID}, {showId}, {actorId});
-    ''')
-    theData = cursor.fetchall()
-    the_response = make_response(jsonify(theData))
+    
+    request_data = request.get_json()
+    favorite_id = request_data.get('favoriteID')
+    show_id = request_data.get('showId')
+    
+    cursor.execute('''
+        INSERT INTO favorites (userID, favoriteID, showId)
+        VALUES (%s, %s, %s)
+    ''', (user_id, favorite_id, show_id))
+    
+    db.get_db().commit()
+    
+    the_response = make_response(jsonify({"message": "Favorite added successfully"}))
     the_response.status_code = 200
     return the_response
     
 #------------------------------------------------------------
 # removes a show/actor to favorites
-@amanda.route('/users/<userId>/favorites/', methods=['DELETE'])
-def delete_favorite():
+@amanda.route('/users/<user_id>/favorites/', methods=['DELETE'])
+def remove_user_favorite(user_id):
     cursor = db.get_db().cursor()
-    cursor.execute('''DELETE FROM favorites (userID, favoriteID)
-VALUES ({userId}, {favoriteID}, {showId}, {actorId});
-    ''')
-    theData = cursor.fetchall()
-    the_response = make_response(jsonify(theData))
+    
+    request_data = request.get_json()
+    favorite_id = request_data.get('favoriteID')
+    show_id = request_data.get('showId')
+    
+    cursor.execute('''
+        DELETE FROM favorites 
+        WHERE userID = %s AND favoriteID = %s AND showId = %s
+    ''', (user_id, favorite_id, show_id))
+    
+    db.get_db().commit()
+    
+    the_response = make_response(jsonify({"message": "Favorite removed successfully"}))
     the_response.status_code = 200
     return the_response
 
@@ -154,3 +170,23 @@ def get_fb():
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
     return the_response
+
+#------------------------------------------------------------
+# get all favorites
+@amanda.route('/users/favorites/', methods=['GET'])
+def get_user_favorites():
+    cursor = db.get_db().cursor()
+    
+    cursor.execute('''
+        SELECT userID, favoriteID, showId
+        FROM favorites 
+        ORDER BY favoritedAt
+    ''')
+    
+    theData = cursor.fetchall()
+    
+    the_response = make_response(jsonify(theData))
+    the_response.status_code = 200
+    return the_response
+
+
