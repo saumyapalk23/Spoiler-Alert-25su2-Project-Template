@@ -118,7 +118,6 @@ LIMIT 3;
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
     return the_response
-
 #------------------------------------------------------------
 # users submit/create feedback
 @amanda.route('/users/<userId>/feedback/', methods=['POST'])

@@ -21,7 +21,6 @@ if st.button("Show Top 5 Most Reviewed Shows"):
 if st.button("Show Top 3 Most Recent Articles"):
     try:
         resp = requests.get(f"http://api:4000/admin/articles/most-recent")
-        resp.raise_for_status()
         articles = resp.json()
         for article in articles:
             st.write(f"**{article['title']}** - {article.get('content', '')[:100]}...")
@@ -31,7 +30,6 @@ if st.button("Show Top 3 Most Recent Articles"):
 if st.button("Show Article Genres for 3 Most Recent Articles"):
     try:
         resp = requests.get("http://api:4000/admin/articles/most-recent/genres")
-        resp.raise_for_status()
         data = resp.json()
         genres = data.get('genres', [])
         
