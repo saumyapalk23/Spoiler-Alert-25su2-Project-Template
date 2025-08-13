@@ -125,9 +125,9 @@ LIMIT 3;
 def give_fb(userId):
     the_data = request.json
     current_app.logger.info(the_data)
-    title = the_data['title']
     content = the_data['content']
     userId = the_data['userId']
+    title = the_data['title']
     query = f'''
         INSERT INTO userFeedback (title, content, userId)
         VALUES (%s, %s, %s);'''

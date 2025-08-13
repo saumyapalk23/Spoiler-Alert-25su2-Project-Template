@@ -6,12 +6,14 @@ from modules.nav import SideBarLinks
 SideBarLinks()
 st.title(f"Welcome Admin {st.session_state['first_name']}.")
 st.subheader("Submit Feedback")
-userId = st.text_input("UserId (This must be an integer.)", key="userId")
 content = st.text_area("Feedback Content", key="content")
+title = st.text_area("Title", key="title")
+userId = st.text_input("UserId (This must be an integer.)", key="userId")
 
 if st.button("Submit Feedback"):
     try:
         data = {
+             "title": title,
             "content": content,
             "userId": userId,
         }

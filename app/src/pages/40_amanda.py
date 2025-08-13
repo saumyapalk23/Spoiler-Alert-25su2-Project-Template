@@ -45,4 +45,3 @@ if st.button("Remove Favorite"):
     except Exception as e:
         st.error(f"Error removing favorite: {e}")
 
-# -----------------------------------------------------------------------------
