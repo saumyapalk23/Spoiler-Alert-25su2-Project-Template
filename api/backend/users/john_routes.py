@@ -42,12 +42,11 @@ def get_shows_by_date(year):
 def search_shows():
     kw = (request.args.get('keyword') or '').strip()
 
-    cur = db.get_db().cursor()
+    cursor = db.get_db().cursor()
 
     base_sql = """
         SELECT DISTINCT
-            s.showID, s.title, s.rating, s.releaseDate,
-            s.season, s.ageRating, s.streamingPlatform
+            s.showID, s.title, s.rating, s.releaseDate, s.season, s.ageRating, s.streamingPlatform
         FROM shows s
         LEFT JOIN keyword k ON k.showId = s.showID
     """
@@ -60,17 +59,17 @@ def search_shows():
                OR s.streamingPlatform LIKE %s
             ORDER BY s.title ASC;
         """
-        cur.execute(sql, (like, like, like))
+        cursor.execute(sql, (like, like, like))
     else:
         sql = base_sql + " ORDER BY s.title ASC;"
-        cur.execute(sql)
+        cursor.execute(sql)
 
-    rows = cur.fetchall()
+    rows = cursor.fetchall()
 
     if rows and isinstance(rows[0], dict):
         data = rows
     else:
-        cols = [d[0] for d in cur.description]
+        cols = [d[0] for d in cursor.description]
         data = [dict(zip(cols, r)) for r in rows]
 
     resp = make_response(jsonify(data))
@@ -122,26 +121,34 @@ def get_shows_by_genre(genreId):
 
 #------------------------------------------------------------
 # Retrieves all shows based on certain streaming platform
-@john.route('/shows/streaming_platform/<int:platformId>', methods=['GET'])
-def get_shows_by_platform(platformId):
-    cursor = db.get_db().cursor()
-    cursor.execute('''SELECT s.showID, s.title, s.rating, s.releaseDate, s.season, s.ageRating, s.writers, s.viewers, sp.streaming_platform
-FROM shows s 
-JOIN streaming_pltfm sp ON s.showID = sp.showID
-WHERE sp.platformID = %s
-ORDER BY s.title ASC;
-    ''', (platformId,))
-    theData = cursor.fetchall()
+PLATFORMS = {
+    "Netflix": 1, "Hulu": 2, "Prime Video": 3, "Disney+": 4,
+    "HBO Max": 5, "Apple TV+": 6, "Peacock": 7, "Paramount+": 8,
+    "Fubo": 9, "BBC": 10, "Crunchyroll": 11, "Discovery+": 12,
+    "ESPN": 13, "FandangoNow": 14, "YouTube": 15, "PlutoTV": 16,
+}
+PLATFORM_ID2NAME = {v: k for k, v in PLATFORMS.items()}
 
-    if not theData: 
-        response_data = {'message': 'No shows found for this streaming platform', 'platformId': platformId}
-        the_response = make_response(jsonify(response_data))
-        the_response.status_code = 404
-        return the_response
-    
-    the_response = make_response(jsonify(theData))
-    the_response.status_code = 200
-    return the_response
+@john.route('/shows/streaming_platform/<int:platform_id>', methods=['GET'])
+def get_shows_by_platform(platform_id):
+    name = PLATFORM_ID2NAME.get(platform_id)
+    if not name:
+        return make_response(jsonify({"error": "unknown platform id"}), 400)
+
+    sql = """
+        SELECT s.showID, s.title, s.rating, s.releaseDate, s.season, s.ageRating, s.streamingPlatform
+        FROM shows s
+        JOIN streaming_pltfm sp ON sp.showId = s.showID
+        WHERE sp.platform = %s
+        ORDER BY s.title ASC
+    """
+    cursor = db.get_db().cursor()
+    cursor.execute(sql, (name,))
+    rows = cursor.fetchall()
+    if rows and not isinstance(rows[0], dict):
+        cols = [d[0] for d in cursor.description]
+        rows = [dict(zip(cols, r)) for r in rows]
+    return make_response(jsonify(rows), 200)
 
 #------------------------------------------------------------
 # Create a new comment for a particular review
