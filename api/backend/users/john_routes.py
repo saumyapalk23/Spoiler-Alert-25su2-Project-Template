@@ -133,98 +133,111 @@ ORDER BY s.title ASC;
 
 #------------------------------------------------------------
 # Create a new comment for a particular review
-@john.route('/reviews/<reviewId>/comments', methods=['POST'])
+@john.route('/reviews/<int:reviewId>/comments', methods=['POST'])
 def create_comment(reviewId):
-    request_data = request.json
-    user_id = request_data.get('userID')
-    comment_content = request_data.get('content')
-    
-    # Verify the review exists
-    cursor = db.get_db().cursor()
-    cursor.execute('''SELECT writtenrevID FROM Reviews WHERE writtenrevID = %s''', (reviewId,))
-    
-    if not cursor.fetchone():
-        response_data = {'error': 'Review not found'}
-        the_response = make_response(jsonify(response_data))
-        the_response.status_code = 404
-        return the_response
-    
-    cursor.execute('''INSERT INTO Comments (writtenrevID, userID, content, createdAt)
-VALUES (%s, %s, %s, NOW());
-    ''', (reviewId, user_id, comment_content))
-    
-    db.get_db().commit()
-    
-    # Get the newly created comment ID
-    comment_id = cursor.lastrowid
-    
-    response_data = {
-        'message': 'Comment created successfully', 
-        'writtencomID': comment_id,
-        'writtenrevID': reviewId
-    }
-    the_response = make_response(jsonify(response_data))
-    the_response.status_code = 201
-    return the_response
+    data = request.get_json(silent=True) or {}
+    user_id = data.get('userID')
+    content = (data.get('content') or '').strip()
+
+    if not user_id or not content:
+        return make_response(jsonify({'error': 'userID and content are required'}), 400)
+
+    try:
+        with db.get_db().cursor() as cursor:
+            cursor.execute(
+                "SELECT 1 FROM reviews WHERE writtenrevId = %s",
+                (reviewId,)
+            )
+            if cursor.fetchone() is None:
+                return make_response(jsonify({'error': 'Review not found'}), 404)
+
+            cursor.execute(
+                """
+                INSERT INTO comments (writtenrevId, userId, content, createdAt)
+                VALUES (%s, %s, %s, NOW())
+                """,
+                (reviewId, user_id, content)
+            )
+            comment_id = cursor.lastrowid 
+
+        db.get_db().commit()
+
+        return make_response(jsonify({
+            'message': 'Comment created successfully',
+            'commentId': comment_id,
+            'writtencomID': comment_id,
+            'writtenrevId': reviewId
+        }), 201)
+
+    except Exception:
+        db.get_db().rollback()
+        return make_response(jsonify({'error': 'Internal server error'}), 500)
 #------------------------------------------------------------
 
 # Update a comment for a particular review
-@john.route('/reviews/<int:reviewId>/comments', methods=['PUT'])
-def update_comment(reviewId):
-    request_data = request.json
-    comment_id = request_data['writtencomID']
-    new_content = request_data['content']
-    user_id = request_data['userID']
+@john.route('/reviews/<int:reviewId>/comments/<int:commentId>', methods=['PUT'])
+def update_comment(reviewId, commentId):
+    req = request.get_json(force=True) or {}
+    new_content = (req.get('content') or '').strip()
+    user_id = int(req.get('userID', 0))
 
-    query = ''' 
+    if not new_content:
+        the_response = make_response(jsonify({"error": "content is required"}))
+        the_response.status_code = 400
+        return the_response
+
+    sql = """
         UPDATE comments
-        SET content = %s, updatedAt = NOW()
-        WHERE writtencomID = %s AND writtenrevID = %s AND userID = %s 
-    '''
-    data = (new_content, comment_id, reviewId, user_id)
+        SET content = %s
+        WHERE commentId = %s AND writtenrevId = %s AND userId = %s
+    """
+    args = (new_content, commentId, reviewId, user_id)
 
-    cursor = db.get_db().cursor()
-    cursor.execute(query, data)
+    cur = db.get_db().cursor()
+    cur.execute(sql, args)
+    db.get_db().commit()
 
-    if cursor.rowcount == 0:
-        response_data = {'error': 'Comment not found or user not authorized to update this comment'}
-        the_response = make_response(jsonify(response_data))
+    if cur.rowcount == 0:
+        the_response = make_response(jsonify(
+            {"error": "Comment not found or user not authorized to update this comment"}
+        ))
         the_response.status_code = 404
         return the_response
-    
-    db.get_db().commit()
-    
-    response_data = {'message': 'Comment updated successfully'}
-    the_response = make_response(jsonify(response_data))
+
+    the_response = make_response(jsonify({"message": "Comment updated successfully"}))
     the_response.status_code = 200
-    return the_response 
+    return the_response
+    
     
 #------------------------------------------------------------
 # Delete a comment for a particular review
-@john.route('/reviews/<int:reviewId>/comments', methods=['DELETE'])
-def delete_comment(reviewId):
-    request_data = request.json
-    comment_id = request_data.get('writtencomID')
-    user_id = request_data.get('userID')
-    
-    cursor = db.get_db().cursor()
-    cursor.execute('''DELETE FROM Comments 
-WHERE writtencomID = %s AND writtenrevID = %s AND userID = %s;
-    ''', (comment_id, reviewId, user_id))
-    
-    if cursor.rowcount == 0:
-        response_data = {'error': 'Comment not found or user not authorized to delete this comment'}
-        the_response = make_response(jsonify(response_data))
+@john.route('/reviews/<int:reviewId>/comments/<int:commentId>', methods=['DELETE'])
+def delete_comment(reviewId, commentId):
+    req = request.get_json(force=True) or {}
+    user_id = int(req.get('userID', 0))
+
+    if not user_id:
+        the_response = make_response(jsonify({"error": "userID is required"}))
+        the_response.status_code = 400
+        return the_response
+
+    sql = """
+        DELETE FROM comments
+        WHERE commentId = %s AND writtenrevId = %s AND userId = %s
+    """
+    args = (commentId, reviewId, user_id)
+
+    cur = db.get_db().cursor()
+    cur.execute(sql, args)
+    db.get_db().commit()
+
+    if cur.rowcount == 0:
+        the_response = make_response(jsonify(
+            {"error": "Comment not found or user not authorized to delete this comment"}
+        ))
         the_response.status_code = 404
         return the_response
 
-    db.get_db().commit()
-    
-    response_data = { 'message': 'Comment deleted successfully',
-        'writtencomID': comment_id,
-        'writtenrevID': reviewId
-        }
-    the_response = make_response(jsonify(response_data))
+    the_response = make_response(jsonify({"message": "Comment deleted successfully"}))
     the_response.status_code = 200
-    
     return the_response
