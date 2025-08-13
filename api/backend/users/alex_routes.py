@@ -47,7 +47,7 @@ ORDER BY num_users;
     return the_response
 
 # ------------------------------------------------------------
-# Get average ratings for a particular show
+# Get average ratings for a top 5 shows
 @alex.route('/shows/<showId>', methods=['GET'])
 def show_avgrev(showId):
     current_app.logger.info('GET /shows/<showId> route')

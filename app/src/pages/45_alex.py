@@ -43,7 +43,7 @@ if st.button('Click here to check recent review statistics!',
              use_container_width=True):
   st.switch_page('pages/46_alexreviews.py')
 
-if st.button("Click here to check recent show rankings!",
+if st.button("Click here to check recent top show rankings and viewings!",
              type='primary',
              use_container_width=True):
   st.switch_page('pages/47_alexrankings.py')

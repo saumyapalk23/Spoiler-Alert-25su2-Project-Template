@@ -10,7 +10,7 @@ st.title(f"Welcome Analyst {st.session_state['first_name']}.")
 
 #-----------------------------------------------------------------------
 API_URL5 = "http://web-api:4000/alex/shows/{id}"
-if st.button("Average Star Ranking",key="avg_rating"):
+if st.button("Top 5 Shows - Average Star Ranking",key="avg_rating"):
     try:
         response = requests.get(API_URL5)
         if response.status_code == 200:
@@ -29,7 +29,7 @@ if st.button("Average Star Ranking",key="avg_rating"):
 
 # ----------------------------------------------------------------------------
 API_URL6 = "http://web-api:4000/alex/shows/{id}/watches/num-watches"
-if st.button("Viewings",key="num_watches"):
+if st.button("Viewings - All Shows",key="num_watches"):
     try:
         response = requests.get(API_URL6)
         if response.status_code == 200:
