@@ -43,6 +43,7 @@ if st.button("Remove Favorite"):
     except Exception as e:
         st.error(f"Error removing favorite: {e}")
 
+
 # -----------------------------------------------------------------------------
 st.markdown("---")  # Add a separator line
 
@@ -73,3 +74,4 @@ if st.button("View Favorites"):
             st.error(f"Failed to retrieve favorites: {resp.text}")
     except Exception as e:
         st.error(f"Error retrieving favorites: {e}")
+

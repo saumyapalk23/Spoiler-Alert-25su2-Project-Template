@@ -153,6 +153,7 @@ def give_fb(userId):
     current_app.logger.info(the_data)
     content = the_data['content']
     userId = the_data['userId']
+    title = the_data['title']
     query = f'''
         INSERT INTO userFeedback (content, userId)
         VALUES (%s, %s);'''
