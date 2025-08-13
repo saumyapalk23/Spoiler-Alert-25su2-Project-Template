@@ -2,9 +2,11 @@ import streamlit as st
 import requests
 from modules.nav import SideBarLinks
 
+
 # Initialize sidebar navigation
 SideBarLinks()
 st.title(f"Welcome Admin {st.session_state['first_name']}.")
+
 
 if st.button("Show Most Popular Reviews"):
     try:
@@ -16,15 +18,18 @@ if st.button("Show Most Popular Reviews"):
     except Exception as e:
         st.error(f"Failed to load popular reviews: {e}")
 
+
 if st.button("Show Top 5 Most Reviewed Shows"):
     try:
         resp = requests.get('http://api:4000/admin/shows/most-reviewed')
-        
+       
         shows = resp.json()  # This is where the error happens
         for show in shows:
             st.write(f"{show['title']} (ID: {show['showId']}), Reviews: {show['num_reviews']}")
     except Exception as e:
         st.error(f"Failed to load shows: {e}")
+
+
 
 
 if st.button("Show Top 3 Most Recent Articles"):
@@ -36,22 +41,23 @@ if st.button("Show Top 3 Most Recent Articles"):
     except Exception as e:
         st.error(f"Failed to load articles: {e}")
 
+
 if st.button("Show Article Genres for 3 Most Recent Articles"):
     try:
         resp = requests.get("http://api:4000/admin/articles/most-recent/genres")
         data = resp.json()
         genres = data.get('genres', [])
-        
+       
         if genres:
             st.write("**Genres of 3 Most Recent Articles:**")
             current_article = None
-            
+           
             for g in genres:
                 article_id = g['articleID']
-                article_title = g['title'] 
+                article_title = g['title']
                 created_at = g['createdAt']
                 genre_title = g['genre_title']
-                
+               
                 # Group by article
                 if current_article != article_id:
                     if current_article is not None:
@@ -60,10 +66,9 @@ if st.button("Show Article Genres for 3 Most Recent Articles"):
                     st.write(f"Created: {created_at}")
                     st.write("Genres:")
                     current_article = article_id
-                
+               
                 st.write(f"  - {genre_title}")
         else:
             st.info("No recent articles with genres found")
     except Exception as e:
         st.error(f"Failed to load genres: {e}")
-
