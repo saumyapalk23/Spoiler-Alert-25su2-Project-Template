@@ -9,6 +9,7 @@ from flask import make_response
 from flask import current_app
 from backend.db_connection import db
 from backend.ml_models.model01 import predict
+from datetime import datetime, date
 
 #------------------------------------------------------------
 # Create a new Blueprint object, which is a collection of 
@@ -191,8 +192,8 @@ def create_comment(reviewId):
 #------------------------------------------------------------
 
 # Update a comment for a particular review
-@john.route('/reviews/<int:reviewId>/comments/<int:commentId>', methods=['PUT'])
-def update_comment(reviewId, commentId):
+@john.route('/reviews/<int:writtenrevId>/comments/<int:commentId>', methods=['PUT'])
+def update_comment(writtenrevId, commentId):
     req = request.get_json(force=True) or {}
     new_content = (req.get('content') or '').strip()
     user_id = int(req.get('userID', 0))
@@ -207,7 +208,7 @@ def update_comment(reviewId, commentId):
         SET content = %s
         WHERE commentId = %s AND writtenrevId = %s AND userId = %s
     """
-    args = (new_content, commentId, reviewId, user_id)
+    args = (new_content, commentId, writtenrevId, user_id)
 
     cur = db.get_db().cursor()
     cur.execute(sql, args)
@@ -227,8 +228,8 @@ def update_comment(reviewId, commentId):
     
 #------------------------------------------------------------
 # Delete a comment for a particular review
-@john.route('/reviews/<int:reviewId>/comments/<int:commentId>', methods=['DELETE'])
-def delete_comment(reviewId, commentId):
+@john.route('/reviews/<int:writtenrevId>/comments/<int:commentId>', methods=['DELETE'])
+def delete_comment(writtenrevId, commentId):
     req = request.get_json(force=True) or {}
     user_id = int(req.get('userID', 0))
 
@@ -241,7 +242,7 @@ def delete_comment(reviewId, commentId):
         DELETE FROM comments
         WHERE commentId = %s AND writtenrevId = %s AND userId = %s
     """
-    args = (commentId, reviewId, user_id)
+    args = (commentId, writtenrevId, user_id)
 
     cur = db.get_db().cursor()
     cur.execute(sql, args)
@@ -257,3 +258,5 @@ def delete_comment(reviewId, commentId):
     the_response = make_response(jsonify({"message": "Comment deleted successfully"}))
     the_response.status_code = 200
     return the_response
+
+#Comments display route 
