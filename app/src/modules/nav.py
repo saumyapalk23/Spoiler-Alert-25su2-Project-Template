@@ -45,7 +45,10 @@ def Comments():
 
 def ShowsFiltering():
     st.sidebar.page_link("pages/13_Shows.py", label="Shows", icon="🎬")
+    
 
+def StreamingPlatform():
+    st.sidebar.page_link("pages/16_StreamingPlatforms.py", label="Streaming Platforms", icon="🎥")
 
 #### ------------------------ System Admin Role ------------------------
 def AdminPageNav():
@@ -109,6 +112,7 @@ def SideBarLinks(show_home=False):
             Comments()
             ShowSearch()
             ShowsFiltering()
+            StreamingPlatform()
 
 
         # If the user role is usaid worker, show the Api Testing page

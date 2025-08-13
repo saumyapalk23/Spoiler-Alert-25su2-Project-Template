@@ -9,7 +9,7 @@ st.set_page_config(layout = 'wide')
 
 SideBarLinks()
 
-st.title("Filters")
+st.title("Filter by")
 st.write('')
 
 if st.button("View shows filtered by genre",
