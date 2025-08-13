@@ -1,19 +1,16 @@
 import logging
 logger = logging.getLogger(__name__)
-
 import streamlit as st
 import requests
 from modules.nav import SideBarLinks
 
 st.set_page_config(layout = 'wide')
-
 SideBarLinks()
 
 st.title("Filtered by genre")
 st.write('')
 
 genre_id = st.number_input("Genre ID", min_value=1, step=1, key="genre_id_input")
-
 if st.button("See Shows", use_container_width=True):
     try:
         response = requests.get(f"http://api:4000/john/shows/genre/{int(genre_id)}")
