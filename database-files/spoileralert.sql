@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS reviews(
 
 DROP TABLE IF EXISTS comments;
 CREATE TABLE IF NOT EXISTS comments(
-	commentId INT NOT NULL PRIMARY KEY,
+	commentId INTEGER AUTO_INCREMENT NOT NULL PRIMARY KEY,
     writtenrevId INT NOT NULL,
     userId INT NOT NULL,
     createdAt DATETIME DEFAULT NOW(),
@@ -251,7 +251,7 @@ CREATE TABLE IF NOT EXISTS favorited_prod(
     showId INT NOT NULL,
     PRIMARY KEY (favoritedId, showId),
     CONSTRAINT fk_favoritedFavorites FOREIGN KEY (favoritedId) REFERENCES favorites (favoriteId)
-        ON DELETE RESTRICT
+        ON DELETE CASCADE
         ON UPDATE CASCADE,
     CONSTRAINT fk_favoritedShow FOREIGN KEY (showId) REFERENCES shows (showId)
         ON DELETE CASCADE
@@ -299,7 +299,7 @@ CREATE TABLE IF NOT EXISTS article_genre (
 
 DROP TABLE IF EXISTS com_reviews;
 CREATE TABLE IF NOT EXISTS com_reviews (
-    commentId INT NOT NULL,
+    commentId INTEGER NOT NULL,
     writtenrevId INT NOT NULL,
     PRIMARY KEY (commentId, writtenrevId),
     CONSTRAINT fk_comrev FOREIGN KEY (commentId) REFERENCES comments (commentId)
