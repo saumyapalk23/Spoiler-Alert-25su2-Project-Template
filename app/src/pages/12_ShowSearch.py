@@ -19,9 +19,9 @@ if st.button("Search Shows"):
         if keyword.strip() == "":
             st.warning("Please type something to search.")
         else:
-            resp = requests.get(f"http://api:4000/john/shows/search", params={"keyword": keyword})
-            if resp.status_code == 200:
-                shows = resp.json()
+            response = requests.get(f"http://api:4000/john/shows/search", params={"keyword": keyword})
+            if response.status_code == 200:
+                shows = response.json()
                 if shows:
                     for show in shows:
                         st.write(f"**{show.get('title', 'No Title')}**")
@@ -31,6 +31,6 @@ if st.button("Search Shows"):
                 else:
                     st.info("No shows found. Try another keyword.")
             else:
-                st.error(f"Search failed: {resp.status_code} — {resp.text}")
+                st.error(f"Search failed: {response.status_code}")
     except Exception as e:
         st.error(f"Error searching shows: {e}")

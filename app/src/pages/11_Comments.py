@@ -30,15 +30,15 @@ if st.button("Create Comment"):
             "userID": user_id_comment,
             "content": comment_content
         }
-        resp = requests.post(
+        response = requests.post(
             f"http://api:4000/john/reviews/{review_id_comment}/comments",
             json=payload
         )
-        if resp.status_code == 201:
-            result = resp.json()
+        if response.status_code == 201:
+            result = response.json()
             st.success(f"Comment created successfully! Comment ID: {result.get('writtencomID')}")
         else:
-            st.error(f"Failed to create comment: {resp.text}")
+            st.error(f"Failed to create comment: {response.text}")
     except Exception as e:
         st.error(f"Error creating comment: {e}")
 
@@ -59,16 +59,16 @@ if st.button("Update Comment"):
             "userID": int(user_id_update),           
             "content": update_content                
         }
-        resp = requests.put(
+        response = requests.put(
             f"http://api:4000/john/reviews/{int(review_id_update)}/comments",
             json=payload
         )
-        if resp.status_code == 200:
+        if response.status_code == 200:
             st.success("Comment updated successfully!")
-        elif resp.status_code == 404:
+        elif response.status_code == 404:
             st.error("Comment not found or you're not authorized to update it.")
         else:
-            st.error(f"Failed to update comment: {resp.text}")
+            st.error(f"Failed to update comment: {response.text}")
     except Exception as e:
         st.error(f"Error updating comment: {e}")
 
@@ -88,15 +88,15 @@ if st.button("Delete Comment"):
             "userID": int(user_id_delete_comment),
             "writtencomID": int(comment_id_delete)
         }
-        resp = requests.delete(
+        response = requests.delete(
             f"http://api:4000/john/reviews/{int(review_id_delete_comment)}/comments",
             json=payload
         )
-        if resp.status_code == 200:
+        if response.status_code == 200:
             st.success("Comment deleted successfully!")
-        elif resp.status_code == 404:
+        elif response.status_code == 404:
             st.error("Comment not found or you're not authorized to delete it.")
         else:
-            st.error(f"Failed to delete comment: {resp.text}")
+            st.error(f"Failed to delete comment: {response.text}")
     except Exception as e:
         st.error(f"Error deleting comment: {e}")
