@@ -12,7 +12,7 @@ def AboutPageNav():
     st.sidebar.page_link("pages/30_About.py", label="About", icon="🧠")
 
 def ShowsPageNav():
-    st.sidebar.page_link("pages/12_showsearch.py", label="Shows", icon="📺")
+    st.sidebar.page_link("pages/12_ShowSearch.py", label="Shows", icon="📺")
 
 #### ------------------------ Filmmaker Role ------------------------
 def SallyHome():
@@ -36,17 +36,15 @@ def Follows():
 
 ## ------------------------ Casual Binger Role ------------------------
 def ShowSearch():
-    st.sidebar.page_link("pages/12_ShowSearch.py", label="Search for shows", icon="🔎")
+    st.sidebar.page_link("pages/12_ShowSearch.py", label="Search for shows by keyword", icon="🔍")
 
 
 def Comments():
-    st.sidebar.page_link(
-        "pages/11_Comments.py", label="Comments", icon="💬")
+    st.sidebar.page_link("pages/11_Comments.py", label="Comments", icon="💬")
 
 
 def ShowsFiltering():
-    st.sidebar.page_link(
-        "pages/13_Shows.py", label="Shows", icon="🎬")
+    st.sidebar.page_link("pages/13_Shows.py", label="Shows", icon="🎬")
 
 
 #### ------------------------ System Admin Role ------------------------

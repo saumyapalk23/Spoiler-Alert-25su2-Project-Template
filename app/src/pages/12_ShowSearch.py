@@ -1,19 +1,16 @@
 import logging
-
 logger = logging.getLogger(__name__)
 
 import streamlit as st
-from modules.nav import SideBarLinks
 import requests
+from modules.nav import SideBarLinks
 
-st.set_page_config(layout="wide")
+st.set_page_config(layout = 'wide')
 
-# Display the appropriate sidebar links for the role of the logged in user
 SideBarLinks()
 
-st.title("Show Search")
+st.title("Keyword Show Search")
 st.write('')
-st.write("Type in a keyword and I'll look for matching shows for you!")
 
 keyword = st.text_input("Search by keyword", placeholder="e.g., crime, space, romance")
 

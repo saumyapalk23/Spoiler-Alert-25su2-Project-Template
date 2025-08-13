@@ -14,8 +14,8 @@ st.title(f"Welcome, {st.session_state['first_name']}.")
 st.write('')
 
 
-#starting with the same display as sallys to display shows
-API_URL1 = "http://web-api:4000/alex/shows"
+#starting with the same display as alex to display shows
+API_URL1 = "http://web-api:4000/john/shows"
 def fetch_shows():
     try:
         response = requests.get(API_URL1)
@@ -59,10 +59,3 @@ def main():
             st.write(f"**Release Date:** {release_date}")
             st.write(f"**Age Rating:** {age_rating}")
             st.write(f"**Streaming Platform:** {streaming_platform}")
-            
-
-if st.button("View Classification Demo",
-             type='primary',
-             use_container_width=True):
-  st.switch_page('pages/13_Shows.py')
-  
