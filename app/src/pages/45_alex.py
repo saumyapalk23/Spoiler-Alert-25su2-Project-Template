@@ -20,35 +20,6 @@ import requests
 
 st.title(f"Welcome Analyst {st.session_state['first_name']}.")
 
-# Fetch data from the API
-try:
-    shows = requests.get('http://api:4000/alex/shows').json()
-except requests.exceptions.RequestException as e:
-    st.error(f"Error fetching shows: {e}")
-    shows = []
-
-# Get the slider value
-selected_szn = st.slider("Choose season:", 0, 20, (0, 20))
-
-# Filter shows based on the slider value
-filtered_shows = []
-for show in shows:
-    try:
-        # Safely convert the season value to an integer
-        season_value = int(show.get('season', 0))
-        if selected_szn[0] <= season_value <= selected_szn[1]:
-            filtered_shows.append(show)
-    except (ValueError, TypeError):
-        # This block catches errors where 'season' isn't a number
-        # It's a good practice to log or handle this, but for now, we just continue.
-        continue
-
-# Display the results
-if filtered_shows:
-    st.write('Here are the shows you requested!')
-    st.dataframe(filtered_shows)
-else:
-    st.write('No shows found that meet your criteria.')
 
 # ----------------------------------------------------------------------------
 API_URL2 = "http://web-api:4000/alex/users"
@@ -64,3 +35,21 @@ if st.button("Active User Count", key="active"):
 
     except requests.exceptions.RequestException as e:
         st.error(f"Error connecting to API: {str(e)}")
+
+# ----------------------------------------------------------------------------
+
+if st.button('Click here to check recent review statistics!', 
+             type='primary',
+             use_container_width=True):
+  st.switch_page('pages/46_alexreviews.py')
+
+if st.button("Click here to check recent show rankings!",
+             type='primary',
+             use_container_width=True):
+  st.switch_page('pages/47_alexrankings.py')
+
+if st.button("Click here to filter shows by season count!",
+             type='primary',
+             use_container_width=True):
+  st.switch_page('pages/48_alexfiltershow.py')
+  

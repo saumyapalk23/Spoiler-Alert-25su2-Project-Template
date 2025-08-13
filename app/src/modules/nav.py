@@ -11,9 +11,6 @@ def HomeNav():
 def AboutPageNav():
     st.sidebar.page_link("pages/30_About.py", label="About", icon="🧠")
 
-def ShowsPageNav():
-    st.sidebar.page_link("pages/12_ShowSearch.py", label="Shows", icon="📺")
-
 #### ------------------------ Filmmaker Role ------------------------
 def SallyHome():
     st.sidebar.page_link(
@@ -35,25 +32,28 @@ def Follows():
 
 
 ## ------------------------ Casual Binger Role ------------------------
-def ShowSearch():
-    st.sidebar.page_link("pages/12_ShowSearch.py", label="Search for shows by keyword", icon="🔍")
+def johnMain():
+    st.sidebar.page_link("pages/10_john.py", label="John's Homepage", icon="📺")
 
+def ShowSearch():
+    st.sidebar.page_link("pages/12_johnshowsearch.py", label="General Show Search", icon="🔍")
 
 def Comments():
-    st.sidebar.page_link("pages/11_Comments.py", label="Comments", icon="💬")
-
+    st.sidebar.page_link("pages/11_johncomments.py", label="Comments", icon="💬")
 
 def ShowsFiltering():
-    st.sidebar.page_link("pages/13_Shows.py", label="Shows", icon="🎬")
+    st.sidebar.page_link("pages/13_johnshows.py", label="Filter Shows", icon="🎬")
     
-
 def StreamingPlatform():
-    st.sidebar.page_link("pages/16_StreamingPlatforms.py", label="Streaming Platforms", icon="🎥")
+    st.sidebar.page_link("pages/16_johnstreaming.py", label="Streaming", icon="🎥")
 
 #### ------------------------ System Admin Role ------------------------
+def amandaMain():
+    st.sidebar.page_link("pages/40_amanda.py", label="Amanda's Homepage", icon="📺")
+
 def Favorites():
     st.sidebar.page_link(
-        "pages/40_amanda.py", label="Favs", icon="❤️"
+        "pages/40_amanda.py", label="Favorites", icon="❤️"
     )
 
 def RecentArticles():
@@ -78,8 +78,13 @@ def Reviews():
     )
 def AlexHome():
     st.sidebar.page_link(
-        "pages/45_alex.py", label="Alex's Main Page", icon="🧭"
+        "pages/45_alex.py", label="Alex's Homepage", icon="🧭"
     )
+def filter_show():
+    st.sidebar.page_link(
+        "pages/48_alexfiltershow.py", label="Season Filter", icon="⁉️"
+    )
+
 # --------------------------------Links Function -----------------------------------------------
 def SideBarLinks(show_home=False):
     """
@@ -110,6 +115,7 @@ def SideBarLinks(show_home=False):
 
         # If the user role is usaid worker, show the Api Testing page
         if st.session_state["role"] == "viewer":
+            johnMain()
             Comments()
             ShowSearch()
             ShowsFiltering()
@@ -124,15 +130,13 @@ def SideBarLinks(show_home=False):
 
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state["role"] == "administrator":
+            amandaMain()
             Favorites()
             RecentArticles()
             Feedback()
 
     # Always show the About page at the bottom of the list of links
     AboutPageNav()
-
-    #Always allow direct to show search as well
-    ShowsPageNav()
 
     if st.session_state["authenticated"]:
         # Always show a logout button if there is a logged in user
