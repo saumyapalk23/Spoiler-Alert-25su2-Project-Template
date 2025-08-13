@@ -1,12 +1,23 @@
-# What this project is - updated 8/11
+# Spoiler Alert
 
 Our project is meant to be an app similar to letterboxd where you can view and review different shows. It uses data from users, shows, actors, and directors to allow users to rate, review, and discuss their favorite shows. The database is built in MySQL with the application built using python, streamlit, and flask. 
 
-The app is run using app, api, and database containers in docker desktop. The users are accessed by buttons on the home page, and each user profile has access to different features based on their hypothetical role in the apps userbase. We have Amanda, who is a system administrator, Sally, an aspiring filmmaker, John, a (not very) casual binger (roll credits), and Alex, who is a data analyst. 
 
+### How to run the app
+The app is run using app, api, and database containers in docker desktop. To start the app, use `docker compose up -d`, and shut off the containers using `docker compose down -v`. In order to run everything properly, you need to make a copy of the `.env.template` file, change the password and set the database so that it says `DB_NAME=spoileralert`, and save as just `.env`. 
+
+
+### Users
+The users are accessed by buttons on the home page, and each user profile has access to different features based on their hypothetical role in the apps userbase. We have Amanda, who is a system administrator, Sally, an aspiring filmmaker, John, a (not very) casual binger (roll credits), and Alex, who is a data analyst. 
+
+### Navigating the app
 The buttons controlling the login direct to each users home page, as well as granting the role's dedicated sessionstate, which grants different functionalities. Most basically, it changes what each user sees based on their user stories, but also gives each user access to different nav bars on the left side, which would be most practical for an admin who would have greater permissions than an ordinary user. 
 
-The routes in the backend are all SQL commands, which make it easy for keywords to narrow down the list of shows as in the search by keywords or as in adding data in the form of reviews or comments on those reviews.  
+### The Database
+The routes in the backend are all SQL commands, which make it easy for keywords to narrow down the list of shows as in the search by keywords or as in adding data in the form of reviews or comments on those reviews. The SQL database, `spoileralert.sql` automatically runs with the db container, and contains data viewed and updated using the commands in each users routes.
+
+Project by: Saumya Palakodety, Constanza Perusquia Ruiz, Jahnavi Bulusu, and Hannah Chapman
+
 
 
 
