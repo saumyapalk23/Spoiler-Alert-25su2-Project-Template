@@ -15,25 +15,6 @@ from backend.ml_models.model01 import predict
 # routes.
 sally = Blueprint('sally', __name__)
 
-
-#------------------------------------------------------------
-# Updates a rating of a review for a particular show
-@sally.route('/shows/<int:showId>/reviews/<int:reviewId>', methods=['PUT'])
-def update_review_rating(showId, reviewId):
-    data = request.get_json()
-    rating = data.get('rating')
-
-    cursor = db.get_db().cursor()
-    cursor.execute('''
-        UPDATE reviews SET rating = %s 
-        WHERE writtenrevID = %s AND showID = %s;
-    ''', (rating, reviewId, showId))
-    db.get_db().commit()
-
-    the_response = make_response(jsonify({"message": "Review rating updated successfully"}))
-    the_response.status_code = 200
-    return the_response
-
 #------------------------------------------------------------
 # Retrive all watchlists for a user 
 @sally.route('/users/<int:userId>/watchlist', methods=['GET'])
@@ -145,11 +126,6 @@ def add_to_watchlist(userId, showId):
     cursor.execute('''INSERT INTO comp_lists (toWatchId, showId) VALUES (%s, %s)''', 
                    (watchlist_id, showId))
     
-    # Update the numberOfElements in the watchlist table
-    cursor.execute('''UPDATE watchlist 
-                      SET numberOfElements = numberOfElements + 1
-                      WHERE toWatchId = %s AND userId = %s''', 
-                   (watchlist_id, userId))
     
     db.get_db().commit()
     
@@ -218,11 +194,6 @@ def delete_from_watchlist(userId, showId):
     cursor.execute('''DELETE FROM comp_lists WHERE toWatchId = %s AND showId = %s''', 
                    (watchlist_id, showId))
     
-    # Update the numberOfElements in the watchlist table
-    cursor.execute('''UPDATE watchlist 
-                      SET numberOfElements = GREATEST(numberOfElements - 1, 0)
-                      WHERE toWatchId = %s AND userId = %s''', 
-                   (watchlist_id, userId))
     
     db.get_db().commit()
     
@@ -434,248 +405,151 @@ def unfollow_user(userId):
 
 #------------------------------------------------------------
 # Creates a new review for a particular show
-
 @sally.route('/shows/<int:showId>/reviews', methods=['POST'])
 def create_review(showId):
+    the_data = request.json
+    current_app.logger.info(the_data)
+    content = the_data['content']
+    rating = the_data['rating']
+    userId = the_data['userId']
+    writtenrevId = the_data['writtenrevId']
     
-    data = request.get_json()
-    user_id = data.get('userId')
-    rating = data.get('rating')
-    content = data.get('content')
+    query = f'''
+        INSERT INTO reviews (content, rating, userId, showId, writtenrevId)
+        VALUES (%s, %s, %s, %s, %s);'''
+    current_app.logger.info(query)
     
-    # Make sure required fields are valid
-    if not user_id:
-        response_data = {'error': 'userId is required in request body'}
-        the_response = make_response(jsonify(response_data))
-        the_response.status_code = 400
-        return the_response
-    
-    if rating is None:
-        response_data = {'error': 'rating is required in request body'}
-        the_response = make_response(jsonify(response_data))
-        the_response.status_code = 400
-        return the_response
-    
-    # Making sure rating range is correct
-    if not (0.0 <= rating <= 5.0):
-        response_data = {'error': 'rating must be between 0.0 and 5.0'}
-        the_response = make_response(jsonify(response_data))
-        the_response.status_code = 400
-        return the_response
-    
+    # executing and committing the insert statement 
     cursor = db.get_db().cursor()
+    cursor.execute(query, (content, rating, userId, showId, writtenrevId))
+    db.get_db().commit()
     
-    try:
-        # Check that the show exists
-        cursor.execute('''SELECT showID, title FROM shows WHERE showID = %s''', (showId,))
-        show = cursor.fetchone()
-        
-        if not show:
-            response_data = {'error': 'Show not found'}
-            the_response = make_response(jsonify(response_data))
-            the_response.status_code = 404
-            return the_response
-        
-        show_id, show_title = show
-        
-        # Check that the user exists
-        cursor.execute('''SELECT userId FROM users WHERE userId = %s''', (user_id,))
-        if not cursor.fetchone():
-            response_data = {'error': 'User not found'}
-            the_response = make_response(jsonify(response_data))
-            the_response.status_code = 404
-            return the_response
-        
-        # Check if user already reviewed this show
-        cursor.execute('''
-            SELECT writtenrevID FROM reviews 
-            WHERE userId = %s AND showID = %s
-        ''', (user_id, showId))
-        
-        if cursor.fetchone():
-            response_data = {'error': 'User has already reviewed this show'}
-            the_response = make_response(jsonify(response_data))
-            the_response.status_code = 409  # Conflict
-            return the_response
-        
-        # Make new review ID 
-        cursor.execute('''SELECT MAX(writtenrevID) FROM reviews''')
-        max_id = cursor.fetchone()[0]
-        new_review_id = (max_id + 1) if max_id else 1
-        
-        # Create the review
-        cursor.execute('''
-            INSERT INTO reviews (writtenrevID, userId, showID, rating, content)
-            VALUES (%s, %s, %s, %s, %s)
-        ''', (new_review_id, user_id, showId, rating, content))
-        
-        db.get_db().commit()
-        
-        response_data = {
-            'message': f'Review created successfully for "{show_title}"',
-            'reviewId': new_review_id,
-            'userId': user_id,
-            'showId': showId,
-            'rating': rating,
-            'content': content
-        }
-        the_response = make_response(jsonify(response_data))
-        the_response.status_code = 201  
-        
-    except Exception as e:
-        db.get_db().rollback()
-        response_data = {'error': f'Failed to create review: {str(e)}'}
-        the_response = make_response(jsonify(response_data))
-        the_response.status_code = 500
-    
+    the_response = make_response("Successfully added review!")
+    the_response.status_code = 200
     return the_response
 
 #------------------------------------------------------------
 # Update a review
 
-@sally.route('/reviews/<int:reviewId>', methods=['PUT'])
-def update_review(reviewId):
+@sally.route('/shows/<int:showId>/reviews/<int:writtenrevId>', methods=['PUT'])
+def update_review(showId, writtenrevId):
+    the_data = request.json
+    current_app.logger.info(the_data)
+    content = the_data['content']
+    rating = the_data['rating']
+    userId = the_data['userId']
     
-    data = request.get_json()
-    user_id = data.get('userId')
-    rating = data.get('rating')
-    content = data.get('content')
+    query = f'''
+        UPDATE reviews 
+        SET content = %s, rating = %s, userId = %s
+        WHERE writtenrevId = %s AND showId = %s;'''
+    current_app.logger.info(query)
     
-    # Make sure required fields are valid
-    if not user_id:
-        response_data = {'error': 'userId is required'}
-        the_response = make_response(jsonify(response_data))
-        the_response.status_code = 400
-        return the_response
-    
-    if rating is not None and not (0.0 <= rating <= 5.0):
-        response_data = {'error': 'rating must be between 0.0 and 5.0'}
-        the_response = make_response(jsonify(response_data))
-        the_response.status_code = 400
-        return the_response
-    
+    # executing and committing the update statement 
     cursor = db.get_db().cursor()
+    cursor.execute(query, (content, rating, userId, writtenrevId, showId))
+    db.get_db().commit()
     
-    try:
-        # Check that review exists and belongs to right user
-        cursor.execute('''
-            SELECT writtenrevID, userId, showID, rating, content 
-            FROM reviews 
-            WHERE writtenrevID = %s
-        ''', (reviewId,))
-        
-        review = cursor.fetchone()
-        
-        if not review:
-            response_data = {'error': 'Review not found'}
-            the_response = make_response(jsonify(response_data))
-            the_response.status_code = 404
-            return the_response
-        
-        existing_review_id, existing_user_id, show_id, existing_rating, existing_content = review
-        
-        if existing_user_id != user_id:
-            response_data = {'error': 'You can only update your own reviews'}
-            the_response = make_response(jsonify(response_data))
-            the_response.status_code = 403  # Forbidden
-            return the_response
-        
-        # Use existing values if not provided in update
-        new_rating = rating if rating is not None else existing_rating
-        new_content = content if content is not None else existing_content
-        
-        # Update the review
-        cursor.execute('''
-            UPDATE reviews 
-            SET rating = %s, content = %s
-            WHERE writtenrevID = %s AND userId = %s
-        ''', (new_rating, new_content, reviewId, user_id))
-        
-        db.get_db().commit()
-        
-        response_data = {
-            'message': 'Review updated successfully',
-            'reviewId': reviewId,
-            'userId': user_id,
-            'showId': show_id,
-            'rating': float(new_rating),
-            'content': new_content
-        }
-        the_response = make_response(jsonify(response_data))
-        the_response.status_code = 200
-        
-    except Exception as e:
-        db.get_db().rollback()
-        response_data = {'error': f'Failed to update review: {str(e)}'}
-        the_response = make_response(jsonify(response_data))
-        the_response.status_code = 500
-    
+    the_response = make_response("Successfully updated review!")
+    the_response.status_code = 200
     return the_response
-
 
 #------------------------------------------------------------
 # Delete a review
-
-@sally.route('/reviews/<int:reviewId>', methods=['DELETE'])
-def delete_review(reviewId):
+@sally.route('/shows/<int:showId>/reviews/<int:writtenrevId>', methods=['DELETE'])
+def delete_review(showId, writtenrevId):
+    current_app.logger.info(f"Deleting review {writtenrevId} for show {showId}")
     
-    data = request.get_json()
-    user_id = data.get('userId')
+    query = f'''
+        DELETE FROM reviews 
+        WHERE writtenrevId = %s AND showId = %s;'''
+    current_app.logger.info(query)
     
-    if not user_id:
-        response_data = {'error': 'userId is required to verify ownership'}
-        the_response = make_response(jsonify(response_data))
-        the_response.status_code = 400
-        return the_response
-    
+    # executing and committing the delete statement 
     cursor = db.get_db().cursor()
+    cursor.execute(query, (writtenrevId, showId))
+    db.get_db().commit()
     
-    try:
-        # Check that review exists and belongs to right user
-        cursor.execute('''
-            SELECT writtenrevID, userId, showID 
-            FROM reviews 
-            WHERE writtenrevID = %s
-        ''', (reviewId,))
-        
-        review = cursor.fetchone()
-        
-        if not review:
-            response_data = {'error': 'Review not found'}
-            the_response = make_response(jsonify(response_data))
-            the_response.status_code = 404
-            return the_response
-        
-        existing_review_id, existing_user_id, show_id = review
-        
-        if existing_user_id != user_id:
-            response_data = {'error': 'You can only delete your own reviews'}
-            the_response = make_response(jsonify(response_data))
-            the_response.status_code = 403  # Forbidden
-            return the_response
-        
-        # Actually deleting
-        cursor.execute('''
-            DELETE FROM reviews 
-            WHERE writtenrevID = %s AND userId = %s
-        ''', (reviewId, user_id))
-        
-        db.get_db().commit()
-        
-        response_data = {
-            'message': 'Review deleted successfully',
-            'reviewId': reviewId,
-            'userId': user_id,
-            'showId': show_id
-        }
-        the_response = make_response(jsonify(response_data))
-        the_response.status_code = 200
-        
-    except Exception as e:
-        db.get_db().rollback()
-        response_data = {'error': f'Failed to delete review: {str(e)}'}
-        the_response = make_response(jsonify(response_data))
-        the_response.status_code = 500
-    
+    the_response = make_response("Successfully deleted review!")
+    the_response.status_code = 200
     return the_response
 
+#------------------------------------------------------------
+# Get all reviews
+
+@sally.route('/reviews', methods=['GET'])
+def get_all_reviews():
+    current_app.logger.info("Fetching all reviews")
+    
+    query = '''
+        SELECT writtenrevId, content, rating, userId, showId
+        FROM reviews
+        ORDER BY writtenrevId DESC;'''
+    current_app.logger.info(query)
+    
+    cursor = db.get_db().cursor()
+    cursor.execute(query)
+    reviews = cursor.fetchall()
+    
+    # Convert to list of dictionaries
+    reviews_list = []
+    for review in reviews:
+        reviews_list.append({
+            'writtenrevId': review['writtenrevId'],
+            'content': review['content'],
+            'rating': review['rating'],
+            'userId': review['userId'],
+            'showId': review['showId']
+        })
+    
+    return jsonify(reviews_list)
+
+# #------------------------------------------------------------
+# # Update customer info for customer with particular userID
+# #   Notice the manner of constructing the query.
+# @customers.route('/customers', methods=['PUT'])
+# def update_customer():
+#     current_app.logger.info('PUT /customers route')
+#     cust_info = request.json
+#     cust_id = cust_info['id']
+#     first = cust_info['first_name']
+#     last = cust_info['last_name']
+#     company = cust_info['company']
+
+#     query = 'UPDATE customers SET first_name = %s, last_name = %s, company = %s where id = %s'
+#     data = (first, last, company, cust_id)
+#     cursor = db.get_db().cursor()
+#     r = cursor.execute(query, data)
+#     db.get_db().commit()
+#     return 'customer updated!'
+
+# #------------------------------------------------------------
+# # Get customer detail for customer with particular userID
+# #   Notice the manner of constructing the query. 
+# @customers.route('/customers/<userID>', methods=['GET'])
+# def get_customer(userID):
+#     current_app.logger.info('GET /customers/<userID> route')
+#     cursor = db.get_db().cursor()
+#     cursor.execute('SELECT id, first_name, last_name FROM customers WHERE id = {0}'.format(userID))
+    
+#     theData = cursor.fetchall()
+    
+#     the_response = make_response(jsonify(theData))
+#     the_response.status_code = 200
+#     return the_response
+
+# #------------------------------------------------------------
+# # Makes use of the very simple ML model in to predict a value
+# # and returns it to the user
+# @customers.route('/prediction/<var01>/<var02>', methods=['GET'])
+# def predict_value(var01, var02):
+#     current_app.logger.info(f'var01 = {var01}')
+#     current_app.logger.info(f'var02 = {var02}')
+
+#     returnVal = predict(var01, var02)
+#     return_dict = {'result': returnVal}
+
+#     the_response = make_response(jsonify(return_dict))
+#     the_response.status_code = 200
+#     the_response.mimetype = 'application/json'
+#     return the_response
