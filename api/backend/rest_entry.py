@@ -8,6 +8,7 @@ from backend.db_connection import db
 from backend.users.amanda_routes import amanda
 from backend.users.alex_routes import alex
 from backend.users.sally_routes import sally
+from backend.users.john_routes import john
 
 def create_app():
     app = Flask(__name__)
@@ -48,7 +49,9 @@ def create_app():
     app.logger.info("create_app(): registering blueprints with Flask app object.")
     app.register_blueprint(amanda, url_prefix="/admin")
     app.register_blueprint(alex, url_prefix="/alex")
-    app.register_blueprint(sally, url_prefix="/filmmaker")
+    app.register_blueprint(sally, url_prefix="/sally")
+    app.register_blueprint(john, url_prefix="/john")
+    
 
     # Don't forget to return the app object
     return app

@@ -16,7 +16,7 @@ if st.button('Update ML Models',
              use_container_width=True):
   st.switch_page('pages/21_ML_Model_Mgmt.py')
 
-  if st.button('View Alex', 
+if st.button('View Alex', 
              type='primary',
              use_container_width=True):
-  st.switch_page('pages/32_alex.py')
+   st.switch_page('pages/32_alex.py')

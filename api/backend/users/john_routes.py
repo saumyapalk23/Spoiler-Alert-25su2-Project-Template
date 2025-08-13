@@ -13,22 +13,25 @@ from backend.ml_models.model01 import predict
 #------------------------------------------------------------
 # Create a new Blueprint object, which is a collection of 
 # routes.
+
 john = Blueprint('john', __name__)
 
 
 #------------------------------------------------------------
 # Get all shows based on release date
-@john.route('/shows', methods=['GET'])
-def get_shows_by_date():
-
+@john.route('/shows/release_date/<int:year>', methods=['GET'])
+def get_shows_by_date(year):
     cursor = db.get_db().cursor()
+    
+    # Filter shows by release year
     cursor.execute('''
-    SELECT showId, title, releaseDate, genre, description
-    FROM shows
-    ORDER BY releaseDate DESC; 
-    ''')
+        SELECT showId, title, rating, releaseDate
+        FROM shows
+        WHERE YEAR(releaseDate) = %s
+        ORDER BY releaseDate DESC
+    ''', (year,))
+    
     theData = cursor.fetchall()
-
     the_response = make_response(jsonify(theData))
     the_response.status_code = 200
     return the_response
@@ -164,35 +167,7 @@ VALUES (%s, %s, %s, NOW());
     the_response.status_code = 201
     return the_response
 #------------------------------------------------------------
-# Update a comment for a particular review 
-@john.route('/reiews/<int:reviewId>/comments', methods=['PUT'])
-def update_comment(reviewId):
-    request_data = request.json
-    comment_id = request_data['writtencomID']
-    new_content = request_data['content']
-    user_id = request_data['userID']
 
-    query = '''
-        UPDATE comments 
-        SET content = %s, updateAt = NOW() 
-        WHERE writtencomID = %s AND writtenrevID = %s AND userID = %s '''
-    data = (new_content, comment_id, reviewId, user_id)
-
-    cursor = db.get_db().cursor()
-    cursor.execute(query, data) 
-
-    if cursor.rowcount == 0: 
-        response_data = {'error': 'Comment not found or user not authorized to update this comment'}
-        the_response = make_response(jsonify(response_data))
-        the_response.status_code = 404 
-        return the_response
-    db.get_db().commit()
-    response_data = {'message': 'Comment updated successfully'}
-    the_response = make_response(jsonify(response_data))
-    the_response.status_code = 200 
-    return the_response 
-
-#------------------------------------------------------------
 # Update a comment for a particular review
 @john.route('/reviews/<int:reviewId>/comments', methods=['PUT'])
 def update_comment(reviewId):
