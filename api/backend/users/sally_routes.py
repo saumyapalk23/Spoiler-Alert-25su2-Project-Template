@@ -36,42 +36,70 @@ def update_review_rating(showId, reviewId):
 
 #------------------------------------------------------------
 # Retrive all watchlists for a user 
-@sally.route('/users/<int:userId>/watchlists', methods=['GET'])
-def get_user_watchlists(userId): 
+@sally.route('/users/<int:userId>/watchlist', methods=['GET'])
+def get_user_watchlists(userId):
     cursor = db.get_db().cursor()
     cursor.execute('''
-        SELECT watchlistId, userId, name, createdAt
-        FROM watchlists
+        SELECT toWatchId, userId, name, createdAt
+        FROM watchlist
         WHERE userId = %s;
-    ''', (userId))
+    ''', (userId,))
     theData = cursor.fetchall()
-
-    the_response = make_response(jsonify())
-    the_response.status_code = 200
-    return the_response
+    
+    # Convert to list of dictionaries if needed
+    watchlists = []
+    for row in theData:
+        watchlists.append({
+            'toWatchId': row['toWatchId'],  # or row[0] if using tuple
+            'userId': row['userId'],        # or row[1]
+            'name': row['name'],           # or row[2]
+            'createdAt': row['createdAt']  # or row[3]
+        })
+    
+    return make_response(jsonify(watchlists), 200)
 
 #------------------------------------------------------------
 # Create a new watchlist for user
-@sally.route('/users/<int:userId>/watchlists', methods=['POST'])
+@sally.route('/users/<int:userId>/watchlist', methods=['POST'])
 def create_watchlist(userId): 
     data = request.get_json()
     name = data.get('name')
+    show_id = data.get('showId')  # Add showId from request
+    
+    # Validate required fields
+    if not name or not show_id:
+        return make_response(jsonify({"error": "Both name and showId are required"}), 400)
 
     cursor = db.get_db().cursor()
+    
+    # Use alias to make column access easier
+    cursor.execute('SELECT MAX(toWatchId) as max_id FROM watchlist')
+    max_id_result = cursor.fetchone()
+    
+    # Now we can access it consistently
+    max_id = max_id_result['max_id'] if max_id_result['max_id'] is not None else 0
+    new_to_watch_id = max_id + 1
+    
+    # Insert with the calculated toWatchId and showId
     cursor.execute('''
-        INSERT INTO watchlists (userId, name)
-        VALUES (%s, %s);
-    ''', (userId, name))
+        INSERT INTO watchlist (toWatchId, userId, name, showId)
+        VALUES (%s, %s, %s, %s);
+    ''', (new_to_watch_id, userId, name, show_id))
+    
     db.get_db().commit()
 
-    the_response = make_response(jsonify({"message": "Watchlist created"}))
+    the_response = make_response(jsonify({
+        "message": "Watchlist created",
+        "toWatchId": new_to_watch_id,
+        "showId": show_id
+    }))
     the_response.status_code = 201
     return the_response
 
 
 #------------------------------------------------------------
 # Adds new shows in a watchlist
-@sally.route('/user/<int:userId>/watchlists/shows/<int:showId>', methods=['PUT'])
+@sally.route('/user/<int:userId>/watchlist/shows/<int:showId>', methods=['PUT'])
 def add_to_watchlist(userId, showId): 
     data = request.get_json()
     watchlist_id = data.get('toWatchId')  
@@ -144,7 +172,7 @@ def add_to_watchlist(userId, showId):
 #------------------------------------------------------------
 # Deletes shows in a watchlist
 
-@sally.route('/user/<int:userId>/watchlists/shows/<int:showId>', methods=['DELETE'])
+@sally.route('/user/<int:userId>/watchlist/shows/<int:showId>', methods=['DELETE'])
 def delete_from_watchlist(userId, showId): 
     data = request.get_json()
     watchlist_id = data.get('toWatchId')  
