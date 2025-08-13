@@ -40,30 +40,42 @@ def get_shows_by_date(year):
 # Get all shows based on certain keywords
 @john.route('/shows/search', methods=['GET'])
 def search_shows():
-    # Get search keyword from query parameters
-    search_keyword = request.args.get('keyword', '').strip()
-    cursor = db.get_db().cursor()
-    if search_keyword: 
-        cursor.execute('''
-            SELECT DISTINCT s.showID, s.title, s.rating, s.releaseDate, s.season, s.ageRating, s.writers, s.viewers
-            FROM shows s 
-            LEFT JOIN keywords k ON k.showID = s.showID
-            WHERE k.keyword LIKE %s 
-                OR s.title LIKE %s
-                OR s.description LIKE %s
+    kw = (request.args.get('keyword') or '').strip()
+
+    cur = db.get_db().cursor()
+
+    base_sql = """
+        SELECT DISTINCT
+            s.showID, s.title, s.rating, s.releaseDate,
+            s.season, s.ageRating, s.streamingPlatform
+        FROM shows s
+        LEFT JOIN keyword k ON k.showId = s.showID
+    """
+
+    if kw:
+        like = f"%{kw}%"
+        sql = base_sql + """
+            WHERE k.keyword LIKE %s
+               OR s.title LIKE %s
+               OR s.streamingPlatform LIKE %s
             ORDER BY s.title ASC;
-        ''', (f'%{search_keyword}%', f'%{search_keyword}%', f'%{search_keyword}%'))
-    else: 
-        cursor.execute('''
-            SELECT s.showID, s.title, s.rating, s.releaseDate, s.season, s.ageRating, s.writers, s.viewers
-            FROM shows s
-            ORDER BY s.title ASC;
-        ''')
-    
-    theData = cursor.fetchall()
-    the_response = make_response(jsonify(theData))
-    the_response.status_code = 200
-    return the_response
+        """
+        cur.execute(sql, (like, like, like))
+    else:
+        sql = base_sql + " ORDER BY s.title ASC;"
+        cur.execute(sql)
+
+    rows = cur.fetchall()
+
+    if rows and isinstance(rows[0], dict):
+        data = rows
+    else:
+        cols = [d[0] for d in cur.description]
+        data = [dict(zip(cols, r)) for r in rows]
+
+    resp = make_response(jsonify(data))
+    resp.status_code = 200
+    return resp
 
 #------------------------------------------------------------
 # Get genres of all articles
