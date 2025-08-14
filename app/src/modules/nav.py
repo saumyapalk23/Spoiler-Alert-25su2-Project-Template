@@ -51,11 +51,6 @@ def StreamingPlatform():
 def amandaMain():
     st.sidebar.page_link("pages/40_amanda.py", label="Amanda's Homepage", icon="📺")
 
-def Favorites():
-    st.sidebar.page_link(
-        "pages/40_amanda.py", label="Favorites", icon="❤️"
-    )
-
 def RecentArticles():
     st.sidebar.page_link(
         "pages/41_amandaarticles.py", label="Recents", icon="🗒️"
@@ -66,6 +61,10 @@ def Feedback():
         "pages/42_amandafeedback.py", label="Feedback", icon="💬"
     )
 
+def Favorites():
+    st.sidebar.page_link(
+        "pages/43_amandafavs.py", label="Favorites", icon="❤️"
+    )
 
 # --------------------------------Analyst Role------------------------------------------------
 def Rankings():
@@ -131,9 +130,9 @@ def SideBarLinks(show_home=False):
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state["role"] == "administrator":
             amandaMain()
-            Favorites()
             RecentArticles()
             Feedback()
+            Favorites()
 
     # Always show the About page at the bottom of the list of links
     AboutPageNav()
