@@ -26,4 +26,4 @@ The routes in the backend are all SQL commands, which make it easy for keywords 
 
 Project by: Saumya Palakodety, Constanza Perusquia Ruiz, Jahnavi Bulusu, and Hannah Chapman
 
-Link to pitch/demo: 
+Link to pitch/demo: https://drive.google.com/file/d/1Iv0rxnEZ5VwsFq7teIGGoPTi8p7O3kaE/view?usp=sharing
