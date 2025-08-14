@@ -5,7 +5,7 @@ from modules.nav import SideBarLinks
 
 # Initialize sidebar navigation
 SideBarLinks()
-st.title(f"Welcome Admin {st.session_state['first_name']}.")
+st.title(f"Welcome, Admin {st.session_state['first_name']}.")
 
 
 if st.button("Show Most Popular Reviews"):

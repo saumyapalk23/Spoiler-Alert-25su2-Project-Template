@@ -6,7 +6,7 @@ from modules.nav import SideBarLinks
 # Initialize sidebar
 SideBarLinks()
 
-st.title(f"Welcome Analyst {st.session_state['first_name']}.")
+st.title(f"Welcome, Analyst {st.session_state['first_name']}.")
 
 #-----------------------------------------------------------------------
 API_URL5 = "http://web-api:4000/alex/shows/{id}"

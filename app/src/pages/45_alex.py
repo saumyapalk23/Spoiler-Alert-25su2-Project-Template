@@ -18,7 +18,7 @@ import streamlit as st
 import pandas as pd
 import requests
 
-st.title(f"Welcome Analyst {st.session_state['first_name']}.")
+st.title(f"Welcome, Analyst {st.session_state['first_name']}.")
 
 
 # ----------------------------------------------------------------------------

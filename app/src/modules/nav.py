@@ -126,6 +126,7 @@ def SideBarLinks(show_home=False):
             AlexHome()
             Rankings()
             Reviews()
+            filter_show()
 
         # If the user is an administrator, give them access to the administrator pages
         if st.session_state["role"] == "administrator":

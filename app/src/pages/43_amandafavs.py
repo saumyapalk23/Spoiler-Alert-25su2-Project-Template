@@ -6,7 +6,7 @@ from modules.nav import SideBarLinks
 # Initialize sidebar navigation
 SideBarLinks()
 
-st.title(f"Welcome Administrator {st.session_state['first_name']}.")
+st.title(f"Welcome, Admin {st.session_state['first_name']}.")
 
 st.subheader("Add a Favorite")
 user_id_add = st.text_input("User ID (add favorite)", key="user_add")

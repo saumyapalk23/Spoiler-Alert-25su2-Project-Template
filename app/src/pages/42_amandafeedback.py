@@ -4,7 +4,7 @@ from modules.nav import SideBarLinks
 
 # Initialize sidebar navigation
 SideBarLinks()
-st.title(f"Welcome Admin {st.session_state['first_name']}.")
+st.title(f"Welcome, Admin {st.session_state['first_name']}.")
 st.subheader("Submit Feedback")
 content = st.text_area("Feedback Content", key="content")
 title = st.text_area("Title", key="title")

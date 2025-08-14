@@ -10,7 +10,7 @@ st.set_page_config(layout = 'wide')
 # Show appropriate sidebar links for the role of the currently logged in user
 SideBarLinks()
 
-st.title(f"Welcome, viewer {st.session_state['first_name']}.")
+st.title(f"Welcome, Viewer {st.session_state['first_name']}.")
 st.write('')
 
 if st.button('Click here to create and view comments!', 
