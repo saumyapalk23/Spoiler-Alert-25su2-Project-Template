@@ -1,6 +1,10 @@
 # Spoiler Alert
 
-Our project is meant to be an app similar to letterboxd where you can view and review different shows. It uses data from users, shows, actors, and directors to allow users to rate, review, and discuss their favorite shows. The database is built in MySQL with the application built using python, streamlit, and flask. 
+We are building ‘Spoiler Alert’, an app dedicated to appreciating content such as TV shows and onstage performances. Unlike platforms like Letterboxd, which cater primarily to film enthusiasts, ‘Spoiler Alert’ is designed for a broader community. From theatregoers and casual fans to performance artists and professionals in the field, this app offers a dedicated space for users to rate, review, and discuss television, plays, and musicals: mediums that are often overlooked on mainstream review platforms and relegated to non-dedicated forums such as Twitter or Reddit. 
+
+Through collecting such user data, we hope to create personalized platforms for discussion and analysis, as well as tailored recommendations for users. Now, lovers of episodic storytelling and live performance no longer have to struggle to find personalized recommendations or to share their niche interests with others. Key features include the ability to log live performances, create watchlists, and connect with others through a built-in forum. ‘Spoiler Alert’ builds upon the best aspects of Letterboxd, further building community.
+
+The database is built in MySQL with the application built using python, streamlit, and flask. 
 
 
 ## How to run the app
